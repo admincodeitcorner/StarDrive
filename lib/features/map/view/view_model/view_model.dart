@@ -97,14 +97,11 @@ static const String mapStyleUrl =
 
   // Add a blue user location marker at the exact GPS position.
   if (!markerAdded) {
-    await controller!.addCircle(
-      CircleOptions(
+await controller!.addSymbol(
+      SymbolOptions(
         geometry: location,
-        circleRadius: 8.0,
-        circleColor: '#4285F4',
-        circleOpacity: 1.0,
-        circleStrokeWidth: 3.0,
-        circleStrokeColor: '#FFFFFF',
+        iconImage: 'marker-15',
+        iconSize: 1.5,
       ),
     );
 
