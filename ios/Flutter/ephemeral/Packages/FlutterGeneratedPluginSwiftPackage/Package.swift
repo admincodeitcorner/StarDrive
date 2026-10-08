@@ -9,20 +9,17 @@ import PackageDescription
 let package = Package(
     name: "FlutterGeneratedPluginSwiftPackage",
     platforms: [
-        .iOS("15.6")
+        .iOS("15.0")
     ],
     products: [
         .library(name: "FlutterGeneratedPluginSwiftPackage", type: .static, targets: ["FlutterGeneratedPluginSwiftPackage"])
     ],
     dependencies: [
-        .package(name: "FlutterFramework", path: "../.packages/FlutterFramework")
+        
     ],
     targets: [
         .target(
-            name: "FlutterGeneratedPluginSwiftPackage",
-            dependencies: [
-                .product(name: "FlutterFramework", package: "FlutterFramework")
-            ]
+            name: "FlutterGeneratedPluginSwiftPackage"
         )
     ]
 )
