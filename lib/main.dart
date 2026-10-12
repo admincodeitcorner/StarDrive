@@ -1,24 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:star_drive/features/map/view/map_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:star_drive/app_bloc_observer.dart';
+import 'package:star_drive/core/di/injector.dart';
+import 'package:star_drive/features/auth/presentation/bloc/login/login_bloc.dart';
+import 'package:star_drive/features/auth/presentation/bloc/register/register_bloc.dart';
+import 'package:star_drive/features/auth/presentation/screens/login_screen.dart';
+import 'package:star_drive/features/auth/presentation/screens/signup.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+Bloc.observer = AppBlocObserver();
+  setupDependencies();
+
+  runApp(const StarDriveApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class StarDriveApp extends StatelessWidget {
+  const StarDriveApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-  
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+    return MultiBlocProvider(
+    providers: [
+BlocProvider<AuthBloc>(
+          create: (_) => sl<AuthBloc>(),
+          child: Signup(),
+        ),
+    ], 
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+
+        home: BlocProvider<LoginBloc>(
+          create: (_) => sl<LoginBloc>(),
+          child: LoginScreen(),
+        ),
       ),
-      home:  MapScreen()
     );
   }
 }
-
