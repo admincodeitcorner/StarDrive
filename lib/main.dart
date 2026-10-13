@@ -25,6 +25,11 @@ class StarDriveApp extends StatelessWidget {
 BlocProvider<AuthBloc>(
           create: (_) => sl<AuthBloc>(),
           child: Signup(),
+
+        ),
+        BlocProvider<LoginBloc>(
+          create: (_) => sl<LoginBloc>(),
+          child: LoginScreen(),
         ),
     ], 
       child: MaterialApp(

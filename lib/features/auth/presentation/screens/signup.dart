@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:star_drive/features/auth/presentation/bloc/register/register_bloc.dart';
-import 'package:star_drive/features/auth/presentation/widgets/custome_text_field.dart';
+import 'package:star_drive/features/auth/presentation/screens/login_screen.dart';
+import 'package:star_drive/features/auth/presentation/widgets/custom_phone_field.dart';
+import 'package:star_drive/features/auth/presentation/widgets/custom_text_field.dart';
 import 'package:star_drive/features/map/map_screen.dart';
 
 import '../bloc/register/register_event.dart';
@@ -91,23 +93,19 @@ class _SignupState extends State<Signup> {
           listener: (context, state) {
             if (state is AuthSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Registration successful!'),
-                ),
+                const SnackBar(content: Text('Registration successful!')),
               );
 
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (_) =>  MapScreen(),
-                ),
+                MaterialPageRoute(builder: (_) => MapScreen()),
                 (route) => false,
               );
             }
 
             if (state is AuthFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (context, state) {
@@ -119,27 +117,32 @@ class _SignupState extends State<Signup> {
                 child: Column(
                   children: [
                     CustomTextField(
+                      labelText: 'Name',
                       controller: nameController,
                       hintText: 'Enter name',
                     ),
                     CustomTextField(
+                      labelText: 'Father Name',
                       controller: fatherNameController,
                       hintText: 'Enter father name',
                     ),
                     CustomTextField(
+                      labelText: 'CNIC',
                       controller: cnicController,
                       hintText: 'Enter CNIC',
                     ),
-                    CustomTextField(
+                    CustomPhoneField(
                       controller: contactNumberController,
+                      labelText: 'Contact Number',
                       hintText: 'Enter contact number',
-                      keyboardType: TextInputType.phone,
+                      initialCountryCode: 'PK',
                     ),
                     CustomTextField(
+                      labelText: 'Address',
                       controller: addressController,
                       hintText: 'Enter address',
                     ),
-                
+
                     Padding(
                       padding: const EdgeInsets.all(8),
                       child: DropdownButtonFormField<String>(
@@ -165,7 +168,7 @@ class _SignupState extends State<Signup> {
                         },
                       ),
                     ),
-                
+
                     Padding(
                       padding: const EdgeInsets.all(8),
                       child: TextFormField(
@@ -185,15 +188,19 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                     ),
-                
+
                     CustomTextField(
+                      passwordIconVisibility:true,
+                      labelText: 'Password',
                       controller: passwordController,
                       hintText: 'Enter password',
                       obscureText: true,
                     ),
                     CustomTextField(
+                      labelText: 'Confrim Password',
                       controller: confirmPasswordController,
                       hintText: 'Confirm password',
+                      passwordIconVisibility:true,
                       obscureText: true,
                       validator: (value) {
                         if (value != passwordController.text) {
@@ -202,20 +209,34 @@ class _SignupState extends State<Signup> {
                         return null;
                       },
                     ),
-                
+
                     const SizedBox(height: 20),
-                
+
                     ElevatedButton(
                       onPressed: isLoading ? null : _register,
                       child: isLoading
                           ? const SizedBox(
                               height: 22,
                               width: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
+                              child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : const Text('Register'),
+                    ),
+                     Row(
+                      mainAxisAlignment: .end,
+                      crossAxisAlignment: .center,
+                      children: [
+                        Text("Already Account?"),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => LoginScreen()),
+                            );
+                          },
+                          child: Text('Login Screen'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -227,4 +248,3 @@ class _SignupState extends State<Signup> {
     );
   }
 }
-
