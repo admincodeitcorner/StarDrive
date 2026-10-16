@@ -7,6 +7,7 @@ class RegisterRequestModel {
   final String role;
   final String dob;
   final String password;
+  final String otpCode;
   final String fcmToken;
   final String androidId;
 
@@ -21,6 +22,7 @@ class RegisterRequestModel {
     required this.password,
     required this.fcmToken,
     required this.androidId,
+    required this.otpCode,
   });
 
   Map<String, dynamic> toJson() {
@@ -33,6 +35,7 @@ class RegisterRequestModel {
       'role': role,
       'dob': dob,
       'password': password,
+      'otpCode': otpCode,
       'fcmToken': fcmToken,
       'androidId': androidId,
     };

@@ -21,10 +21,5 @@ class LoginSubmitted extends LoginEvent {
   });
 
   @override
-  List<Object?> get props => [
-        contactNumber,
-        password,
-        fcmToken,
-        androidId,
-      ];
+  List<Object?> get props => [contactNumber, password, fcmToken, androidId];
 }

@@ -2,7 +2,6 @@ import 'package:star_drive/features/auth/domain/repository/auth_repoitory.dart';
 
 import '../entities/auth_user.dart';
 
-
 class LoginUseCase {
   final AuthRepository repository;
 

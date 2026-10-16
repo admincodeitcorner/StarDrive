@@ -7,8 +7,7 @@ import 'login_state.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginUseCase loginUseCase;
 
-  LoginBloc(this.loginUseCase)
-      : super(const LoginInitial()) {
+  LoginBloc(this.loginUseCase) : super(const LoginInitial()) {
     on<LoginSubmitted>(_onLoginSubmitted);
   }
 

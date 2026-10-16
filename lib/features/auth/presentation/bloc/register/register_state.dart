@@ -16,6 +16,34 @@ final class AuthLoading extends AuthState {
   const AuthLoading();
 }
 
+final class OtpSent extends AuthState {
+  final String contactNumber;
+  final String cnic;
+  final String devCode;
+  final int expiresInSeconds;
+  final int resendAfterSeconds;
+
+  const OtpSent({
+    required this.contactNumber,
+    required this.cnic,
+    required this.devCode,
+    required this.expiresInSeconds,
+    required this.resendAfterSeconds,
+  });
+
+  @override
+  List<Object?> get props => [
+        contactNumber,
+        cnic,
+        devCode,
+        expiresInSeconds,
+        resendAfterSeconds,
+      ];
+}
+class OtpVerified extends AuthState {
+  @override
+  List<Object?> get props => [];
+}
 final class AuthSuccess extends AuthState {
   final AuthUser user;
 

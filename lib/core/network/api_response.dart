@@ -9,7 +9,7 @@ class ApiResponse<T> {
 
   const ApiResponse({required this.code, required this.message, this.data});
 
-  bool get isSuccess => code == 200;
+  bool get isSuccess => code == '000';
 
   factory ApiResponse.fromJson(
     Map<String, dynamic> json,
