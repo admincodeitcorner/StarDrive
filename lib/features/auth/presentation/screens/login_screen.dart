@@ -14,8 +14,10 @@ import 'package:star_drive/features/auth/presentation/widgets/auth_screen_header
 import 'package:star_drive/features/auth/presentation/widgets/custom_auth_button.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_divider.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_phone_field.dart';
-import 'package:star_drive/features/auth/presentation/widgets/custom_text_field.dart';
-import 'package:star_drive/features/map/map_screen.dart';
+
+import '../../../map/presentation/screen/map_screen.dart';
+import '../widgets/password_text_field.dart';
+import '../widgets/social_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -197,4 +199,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-

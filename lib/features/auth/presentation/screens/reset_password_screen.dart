@@ -8,8 +8,8 @@ import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_
 import 'package:star_drive/features/auth/presentation/screens/login_screen.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_auth_button.dart';
 import 'package:star_drive/features/auth/presentation/widgets/password_text_field.dart';
-import 'package:star_drive/features/map/map_screen.dart';
 
+import '../../../map/presentation/screen/map_screen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String contactNumber;
@@ -22,16 +22,13 @@ class ResetPasswordScreen extends StatefulWidget {
   });
 
   @override
-  State<ResetPasswordScreen> createState() =>
-      _ResetPasswordScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _ResetPasswordScreenState
-    extends State<ResetPasswordScreen> {
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _passwordController =
-      TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -47,12 +44,12 @@ class _ResetPasswordScreenState
     if (!_formKey.currentState!.validate()) return;
 
     context.read<ResetPasswordBloc>().add(
-          ResetPasswordSubmitted(
-            contactNumber: widget.contactNumber,
-            otpCode: widget.otpCode,
-            newPassword: _passwordController.text,
-          ),
-        );
+      ResetPasswordSubmitted(
+        contactNumber: widget.contactNumber,
+        otpCode: widget.otpCode,
+        newPassword: _passwordController.text,
+      ),
+    );
   }
 
   @override
@@ -60,24 +57,27 @@ class _ResetPasswordScreenState
     return Scaffold(
       appBar: AppBar(
         title: const Text('Reset Password'),
-        automaticallyImplyLeading:false,
+        automaticallyImplyLeading: false,
       ),
       body: SafeArea(
         child: BlocConsumer<ResetPasswordBloc, ResetPasswordState>(
           listener: (context, state) {
             if (state is ResetPasswordSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
 
-                Navigator.pushAndRemoveUntil(context,
-                 MaterialPageRoute(builder: (_)=> MapScreen()), (route)=>false);
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => MapScreen()),
+                (route) => false,
+              );
             }
 
             if (state is ResetPasswordFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (context, state) {
@@ -127,16 +127,16 @@ class _ResetPasswordScreenState
                         controller: _confirmPasswordController,
                         validator: (value) =>
                             AuthValidator.validateConfirmPassword(
-                          value,
-                          _passwordController.text,
-                        ),
+                              value,
+                              _passwordController.text,
+                            ),
                       ),
                       const SizedBox(height: 24),
 
                       AuthButton(
                         text: 'Reset Password',
                         isLoading: isLoading,
-                        onPressed:  resetPassword,
+                        onPressed: resetPassword,
                       ),
                     ],
                   ),
