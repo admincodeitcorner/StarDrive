@@ -1,14 +1,11 @@
 import 'package:star_drive/features/auth/domain/entities/otp_details.dart';
 
-class SendOtpResponseModel {
-  final int expiresInSeconds;
-  final int resendAfterSeconds;
-  final String devCode;
+class SendOtpResponseModel extends OtpDetails{
 
   const SendOtpResponseModel({
-    required this.expiresInSeconds,
-    required this.resendAfterSeconds,
-    required this.devCode,
+    required super.expiresInSeconds,
+    required super.resendAfterSeconds,
+    required super.devCode,
   });
 
   factory SendOtpResponseModel.fromJson(
@@ -24,11 +21,5 @@ class SendOtpResponseModel {
   }
 
   
-  OtpDetails toEntity() {
-    return OtpDetails(
-      expiresInSeconds: expiresInSeconds,
-      resendAfterSeconds: resendAfterSeconds,
-      devCode: devCode,
-    );
-  }
+  
 }

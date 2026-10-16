@@ -33,7 +33,6 @@ abstract interface class AuthRepository {
   });
  Future<void> verifyOtp({
   required String contactNumber,
-  required OtpPurpose purpose,
   required String code,
 });
 

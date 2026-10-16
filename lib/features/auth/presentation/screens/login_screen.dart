@@ -14,6 +14,7 @@ import 'package:star_drive/features/auth/presentation/widgets/auth_screen_header
 import 'package:star_drive/features/auth/presentation/widgets/custom_auth_button.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_divider.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_phone_field.dart';
+import 'package:star_drive/features/dashboard/presentation/screens/home.screen.dart';
 
 import '../../../map/presentation/screen/map_screen.dart';
 import '../widgets/password_text_field.dart';
@@ -52,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
         SnackBar(content: Text('Welcome ${state.user.name}!')),
       );
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => MapScreen()),
+        MaterialPageRoute(builder: (_) => HomeScreen()),
         (route) => false,
       );
     }
@@ -108,9 +109,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             hintText: '300 1234567',
                             initialCountryCode: 'PK',
                             onPhoneNumberChanged: (phoneNumber) {
-                              setState(() {
-                                _completePhoneNumber = phoneNumber;
-                              });
+                        _completePhoneNumber = phoneNumber;
+
 
                               debugPrint(
                                 'SAVED COMPLETE NUMBER: $_completePhoneNumber',

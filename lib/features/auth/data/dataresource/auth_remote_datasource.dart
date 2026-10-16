@@ -11,17 +11,16 @@ import 'package:star_drive/features/auth/data/model/register_request_model.dart'
 import 'package:star_drive/features/auth/data/model/auth_response_model.dart';
 import 'package:star_drive/features/auth/data/model/reset_password_model.dart';
 import 'package:star_drive/features/auth/data/model/reset_response_model.dart';
+import 'package:star_drive/features/auth/data/model/verify_request_model.dart';
 import 'package:star_drive/features/auth/domain/enums/otp_purpose.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<SendOtpResponseModel> sendOtp(SendOtpRequestModel request);
+  Future<ApiResponse<SendOtpResponseModel>> sendOtp(
+    SendOtpRequestModel request,
+  );
   Future<AuthResponseModel> register(RegisterRequestModel request);
   Future<AuthResponseModel> login(LoginRequestModel loginRequestModel);
-  Future<void> verifyOtp({
-    required String contactNumber,
-    required OtpPurpose purpose,
-    required String code,
-  });
+  Future<void> verifyOtp(VerifyRequestModel verifyRequestModel);
   Future<ResetPasswordResponseModel> resetPassword(
     ResetPasswordRequestModel resetPasswordrrequest,
   );
@@ -32,23 +31,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   AuthRemoteDataSourceImpl(this.dio);
   @override
-  Future<SendOtpResponseModel> sendOtp(SendOtpRequestModel request) async {
+  Future<ApiResponse<SendOtpResponseModel>> sendOtp(
+    SendOtpRequestModel request,
+  ) async {
     try {
-      debugPrint('OTP URL: ${ApiEndpoints.sendOtp}');
-      debugPrint('OTP REQUEST BODY: ${request.toJson()}');
-
       final response = await dio.post<Map<String, dynamic>>(
         ApiEndpoints.sendOtp,
         data: request.toJson(),
       );
 
       final body = response.data;
-      debugPrint('body $body');
 
       if (body == null) {
         throw const FormatException('OTP response is empty.');
       }
-
+      final code = body['code']?.toString() ?? " ";
+      final message = body['message']?.toString() ?? " ";
       if (body['code']?.toString() != '0000') {
         throw Exception(body['message']?.toString() ?? 'Unable to send OTP.');
       }
@@ -65,7 +63,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const FormatException('OTP code is missing from response.');
       }
 
-      return result;
+      return ApiResponse<SendOtpResponseModel>(
+        code: code,
+        message: message,
+        data: result,
+      );
     } on DioException catch (e, stackTrace) {
       debugPrint('========== OTP API ERROR ==========');
       debugPrint('TYPE: ${e.type}');
@@ -87,22 +89,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<AuthResponseModel> register(RegisterRequestModel request) async {
     try {
-      debugPrint('========== REGISTER API REQUEST ==========');
-      debugPrint('Endpoint: ${ApiEndpoints.register}');
-
-      debugPrint('Request fields: ${request.toJson()}');
-
       final response = await dio.post<Map<String, dynamic>>(
         ApiEndpoints.register,
         data: request.toJson(),
       );
 
-      debugPrint('========== REGISTER API RESPONSE ==========');
-      debugPrint('Status code: ${response.statusCode}');
-      debugPrint('response code: ${response.data}');
-
       final body = response.data;
-      debugPrint('body $body');
 
       if (body == null) {
         throw const FormatException('Registration response is empty.');
@@ -110,9 +102,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       final code = body['code']?.toString();
       final message = body['message']?.toString();
-
-      debugPrint('API code: $code');
-      debugPrint('API message: $message');
 
       if (code != '0000') {
         throw Exception(message ?? 'Registration failed. Please try again.');
@@ -152,37 +141,33 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<AuthResponseModel> login(LoginRequestModel request) async {
-    debugPrint('OTP REQUEST BODY: ${request.toJson()}');
-
-    final response = await dio.post<Map<String, dynamic>>(
-      ApiEndpoints.login,
-      data: request.toJson(),
-    );
-
-    debugPrint('LOGIN STATUS CODE: ${response.statusCode}');
-    debugPrint('LOGIN RESPONSE DATA: ${response.data}');
-
-    final body = response.data;
-
-    if (body == null) {
-      throw const FormatException('Login response is empty.');
-    }
-
-    final code = body['code']?.toString();
-
-    if (code != '0000') {
-      throw FormatException(
-        'Login failed: ${body['message'] ?? 'Unknown error'}',
-      );
-    }
-
-    final rawData = body['data'];
-
-    if (rawData is! Map<String, dynamic>) {
-      throw const FormatException('Login response data is missing or invalid.');
-    }
-
     try {
+      final response = await dio.post<Map<String, dynamic>>(
+        ApiEndpoints.login,
+        data: request.toJson(),
+      );
+
+      final body = response.data;
+
+      if (body == null) {
+        throw const FormatException('Login response is empty.');
+      }
+
+      final code = body['code']?.toString();
+
+      if (code != '0000') {
+        throw FormatException(
+          'Login failed: ${body['message'] ?? 'Unknown error'}',
+        );
+      }
+
+      final rawData = body['data'];
+
+      if (rawData is! Map<String, dynamic>) {
+        throw const FormatException(
+          'Login response data is missing or invalid.',
+        );
+      }
       final result = AuthResponseModel.fromJson(rawData);
 
       debugPrint('LOGIN USER: ${result.name}');
@@ -197,21 +182,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> verifyOtp({
-    required String contactNumber,
-    required OtpPurpose purpose,
-    required String code,
-  }) async {
+  Future<void> verifyOtp(VerifyRequestModel verifyRequestModel) async {
     try {
       final response = await dio.post<Map<String, dynamic>>(
         ApiEndpoints.verifyOtp,
-        data: {
-          'contactNumber': contactNumber,
-          'purpose': purpose == OtpPurpose.forgotPassword
-              ? 'ForgotPassword'
-              : 'Register',
-          'code': code,
-        },
+        data: verifyRequestModel.toJson(),
       );
 
       final body = response.data;
@@ -230,89 +205,67 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
- @override
-Future<ResetPasswordResponseModel> resetPassword(
-  ResetPasswordRequestModel request,
-) async {
-  try {
-    debugPrint('[ResetPassword] Request started');
-    debugPrint(
-      '[ResetPassword] Endpoint: '
-      '${dio.options.baseUrl}/api/auth/reset-password',
-    );
-
-    final response = await dio.post<Map<String, dynamic>>(
-      ApiEndpoints.resetPassword,
-      data: request.toJson(),
-    );
-
-    debugPrint(
-      '[ResetPassword] HTTP Status: ${response.statusCode}',
-    );
-
-    final body = response.data;
-
-    if (body == null) {
-      throw Exception('Empty response received from server.');
-    }
-
-    final result = ResetPasswordResponseModel.fromJson(body);
-
-    debugPrint(
-      '[ResetPassword] Response Code: ${result.code}',
-    );
-
-    if (result.code != '0000') {
-      throw Exception(
-        result.message.isNotEmpty
-            ? result.message
-            : 'Password reset failed.',
+  @override
+  Future<ResetPasswordResponseModel> resetPassword(
+    ResetPasswordRequestModel request,
+  ) async {
+    try {
+      final response = await dio.post<Map<String, dynamic>>(
+        ApiEndpoints.resetPassword,
+        data: request.toJson(),
       );
-    }
 
-    debugPrint('[ResetPassword] Request completed successfully');
+      final body = response.data;
 
-    return result;
-  } on DioException catch (e) {
-    debugPrint(
-      '[ResetPassword] Dio Error Type: ${e.type}',
-    );
-    debugPrint(
-      '[ResetPassword] HTTP Status: ${e.response?.statusCode}',
-    );
-
-    final data = e.response?.data;
-
-    if (data is Map) {
-      final message = data['message']?.toString();
-
-      if (message != null && message.isNotEmpty) {
-        throw Exception(message);
+      if (body == null) {
+        throw Exception('Empty response received from server.');
       }
 
-      final errors = data['errors'];
+      final result = ResetPasswordResponseModel.fromJson(body);
 
-      if (errors is Map) {
-        final messages = errors.values
-            .expand((value) => value is List ? value : [value])
-            .map((value) => value.toString())
-            .toList();
+      if (result.code != '0000') {
+        throw Exception(
+          result.message.isNotEmpty ? result.message : 'Password reset failed.',
+        );
+      }
 
-        if (messages.isNotEmpty) {
-          throw Exception(messages.join('\n'));
+      return result;
+    } on DioException catch (e) {
+      debugPrint('[ResetPassword] Dio Error Type: ${e.type}');
+      debugPrint('[ResetPassword] HTTP Status: ${e.response?.statusCode}');
+
+      final data = e.response?.data;
+
+      if (data is Map) {
+        final message = data['message']?.toString();
+
+        if (message != null && message.isNotEmpty) {
+          throw Exception(message);
+        }
+
+        final errors = data['errors'];
+
+        if (errors is Map) {
+          final messages = errors.values
+              .expand((value) => value is List ? value : [value])
+              .map((value) => value.toString())
+              .toList();
+
+          if (messages.isNotEmpty) {
+            throw Exception(messages.join('\n'));
+          }
         }
       }
-    }
 
-    throw Exception(
-      e.response == null
-          ? 'Unable to connect to the server. Please check your internet connection.'
-          : 'Unable to reset your password. Please try again.',
-    );
-  } catch (e, stackTrace) {
-    debugPrint('[ResetPassword] Error: $e');
-    debugPrint('[ResetPassword] Stack Trace: $stackTrace');
-    rethrow;
+      throw Exception(
+        e.response == null
+            ? 'Unable to connect to the server. Please check your internet connection.'
+            : 'Unable to reset your password. Please try again.',
+      );
+    } catch (e, stackTrace) {
+      debugPrint('[ResetPassword] Error: $e');
+      debugPrint('[ResetPassword] Stack Trace: $stackTrace');
+      rethrow;
+    }
   }
-}
 }

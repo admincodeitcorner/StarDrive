@@ -1,43 +1,42 @@
 class RegisterRequestModel {
   final String name;
-  final String fatherName;
-  final String cnic;
   final String contactNumber;
-  final String address;
   final String role;
-  final String dob;
   final String password;
   final String otpCode;
   final String fcmToken;
   final String androidId;
 
+  final String? fatherName;
+  final String? cnic;
+  final String? address;
+  final String? dob;
+
   const RegisterRequestModel({
     required this.name,
-    required this.fatherName,
-    required this.cnic,
     required this.contactNumber,
-    required this.address,
     required this.role,
-    required this.dob,
     required this.password,
+    required this.otpCode,
     required this.fcmToken,
     required this.androidId,
-    required this.otpCode,
+    this.fatherName,
+    this.cnic,
+    this.address,
+    this.dob,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'fatherName': fatherName,
-      'cnic': cnic,
-      'contactNumber': contactNumber,
-      'address': address,
-      'role': role,
-      'dob': dob,
-      'password': password,
-      'otpCode': otpCode,
-      'fcmToken': fcmToken,
-      'androidId': androidId,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'contactNumber': contactNumber,
+        'role': role,
+        'password': password,
+        'otpCode': otpCode,
+        'fcmToken': fcmToken,
+        'androidId': androidId,
+        if (fatherName != null) 'fatherName': fatherName,
+        if (cnic != null) 'cnic': cnic,
+        if (address != null) 'address': address,
+        if (dob != null) 'dob': dob,
+      };
 }

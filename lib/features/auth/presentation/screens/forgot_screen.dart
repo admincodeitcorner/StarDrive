@@ -110,9 +110,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
                   hintText: '300 1234567',
                   initialCountryCode: 'PK',
                   onPhoneNumberChanged: (phoneNumber) {
-                    setState(() {
-                      _completePhoneNumber = phoneNumber;
-                    });
+                  _completePhoneNumber = phoneNumber;
 
                     debugPrint('SAVED COMPLETE NUMBER: $_completePhoneNumber');
                   },

@@ -10,63 +10,64 @@ sealed class AuthEvent extends Equatable {
 
 final class SendOtpRequested extends AuthEvent {
   final String contactNumber;
-  final String? cnic;
-    final OtpPurpose purpose;
-
+  final String? cnic; // sirf Driver registration mein
+  final OtpPurpose purpose;
 
   const SendOtpRequested({
     required this.contactNumber,
-     this.cnic,
-     required this.purpose,
+    required this.purpose,
+    this.cnic,
   });
 
   @override
-  List<Object?> get props => [contactNumber, cnic];
+  List<Object?> get props => [contactNumber, cnic, purpose];
 }
 
 final class RegisterRequested extends AuthEvent {
   final String name;
-  final String fatherName;
-  final String cnic;
   final String contactNumber;
-  final String address;
   final String role;
-  final String dob;
   final String password;
   final String otpCode;
   final String fcmToken;
   final String androidId;
 
+  final String? fatherName;
+  final String? cnic;
+  final String? address;
+  final String? dob;
+
   const RegisterRequested({
     required this.name,
-    required this.fatherName,
-    required this.cnic,
     required this.contactNumber,
-    required this.address,
     required this.role,
-    required this.dob,
     required this.password,
     required this.otpCode,
     required this.fcmToken,
     required this.androidId,
+    this.fatherName,
+    this.cnic,
+    this.address,
+    this.dob,
   });
 
   @override
   List<Object?> get props => [
         name,
-        fatherName,
-        cnic,
         contactNumber,
-        address,
         role,
-        dob,
         password,
         otpCode,
         fcmToken,
         androidId,
+        fatherName,
+        cnic,
+        address,
+        dob,
       ];
 }
-class VerifyOtpRequested extends AuthEvent {
+
+final class VerifyOtpRequested extends AuthEvent {
   final String contactNumber;
   final OtpPurpose purpose;
   final String code;
@@ -78,9 +79,5 @@ class VerifyOtpRequested extends AuthEvent {
   });
 
   @override
-  List<Object?> get props => [
-    contactNumber,
-    purpose,
-    code,
-  ];
+  List<Object?> get props => [contactNumber, purpose, code];
 }

@@ -19,7 +19,7 @@ class AppBlocObserver extends BlocObserver {
     super.onTransition(bloc, transition);
 
     debugPrint(
-      '🔄 [BLoC TRANSITION] ${bloc.runtimeType}\n'
+      ' [BLoC TRANSITION] ${bloc.runtimeType}\n'
       '   Event: ${transition.event.runtimeType}\n'
       '   Previous: ${transition.currentState.runtimeType}\n'
       '   Next: ${transition.nextState.runtimeType}',
@@ -31,7 +31,7 @@ class AppBlocObserver extends BlocObserver {
     super.onChange(bloc, change);
 
     debugPrint(
-      '🟨 [BLoC CHANGE] ${bloc.runtimeType}\n'
+      ' [BLoC CHANGE] ${bloc.runtimeType}\n'
       '   Previous: ${change.currentState.runtimeType}\n'
       '   Next: ${change.nextState.runtimeType}',
     );
@@ -43,7 +43,7 @@ class AppBlocObserver extends BlocObserver {
     Object error,
     StackTrace stackTrace,
   ) {
-    debugPrint('🔴 [BLoC ERROR] ${bloc.runtimeType}');
+    debugPrint(' [BLoC ERROR] ${bloc.runtimeType}');
     debugPrint('Error: $error');
     debugPrintStack(stackTrace: stackTrace);
 

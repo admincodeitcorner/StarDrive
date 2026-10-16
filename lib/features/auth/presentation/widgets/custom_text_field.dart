@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:star_drive/core/constant/api_colors.dart';
 import 'package:star_drive/features/auth/presentation/widgets/auth_field_lable.dart';
 
@@ -12,6 +13,7 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.validator,
     this.textInputAction = TextInputAction.next,
+    this.textInputFormatter,
     required this.labelText, 
     required this.icon,
   });
@@ -20,16 +22,27 @@ class CustomTextField extends StatelessWidget {
 
   final String hintText;
   final String labelText;
-  final TextInputType? keyboardType;
+  final TextInputType?  keyboardType;
   final TextInputAction? textInputAction;
   final bool obscureText;
   final bool passwordIconVisibility;
   final String? Function(String?)? validator;
   final IconData icon;
+  final List<TextInputFormatter>? textInputFormatter;
   OutlineInputBorder _border(Color color) => OutlineInputBorder(
     borderRadius: BorderRadius.circular(18),
     borderSide: BorderSide(color: color),
   );
+
+
+ static final List<TextInputFormatter> defaultInputFormatter = [
+    FilteringTextInputFormatter.allow(
+      RegExp(r"[a-zA-Z\u0600-\u06FF\s'-]"),
+    ),
+  ];
+
+
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -53,6 +66,7 @@ class CustomTextField extends StatelessWidget {
                   }
                   return null;
                 },
+                inputFormatters: textInputFormatter,
             decoration: InputDecoration(
               // labelText: labelText,
               hintText: hintText,

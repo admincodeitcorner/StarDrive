@@ -5,11 +5,10 @@ import 'package:star_drive/features/auth/presentation/auth_validator.dart/auth_v
 import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_password_bloc.dart';
 import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_password_event.dart';
 import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_password_state.dart';
-import 'package:star_drive/features/auth/presentation/screens/login_screen.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_auth_button.dart';
 import 'package:star_drive/features/auth/presentation/widgets/password_text_field.dart';
+import 'package:star_drive/features/dashboard/presentation/screens/home.screen.dart';
 
-import '../../../map/presentation/screen/map_screen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String contactNumber;
@@ -69,7 +68,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (_) => MapScreen()),
+                MaterialPageRoute(builder: (_) => HomeScreen()),
                 (route) => false,
               );
             }

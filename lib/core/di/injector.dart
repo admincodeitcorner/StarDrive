@@ -19,8 +19,12 @@ final sl = GetIt.instance;
 
 void setupDependencies() {
   // Shared HTTP client
+  sl.registerLazySingleton<DioClient>(
+    () => DioClient(),
+  );
+
   sl.registerLazySingleton<Dio>(
-    () => DioClient().dio,
+    () => sl<DioClient>().dio,
   );
 
   // Data source

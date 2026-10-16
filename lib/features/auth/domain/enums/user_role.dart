@@ -5,4 +5,6 @@ enum UserRole {
   const UserRole(this.value);
 
   final String value;
+
+  bool get isDriver => this == UserRole.driver;
 }

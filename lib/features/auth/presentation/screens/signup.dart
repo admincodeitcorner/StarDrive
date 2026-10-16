@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:star_drive/features/auth/data/model/registration_data.dart';
 import 'package:star_drive/features/auth/domain/enums/otp_purpose.dart';
+import 'package:star_drive/features/auth/domain/enums/user_role.dart';
 import 'package:star_drive/features/auth/presentation/auth_validator.dart/auth_validator.dart';
 import 'package:star_drive/features/auth/presentation/bloc/register/register_bloc.dart';
 
@@ -19,6 +20,7 @@ import 'package:star_drive/features/auth/presentation/widgets/custom_divider.dar
 import 'package:star_drive/features/auth/presentation/widgets/custom_phone_field.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_text_field.dart';
 import 'package:star_drive/features/auth/presentation/widgets/password_text_field.dart';
+import 'package:star_drive/features/auth/presentation/widgets/sign_up_top_bar.dart';
 import 'package:star_drive/features/auth/presentation/widgets/social_button.dart';
 import 'package:star_drive/core/constant/api_colors.dart';
 
@@ -44,6 +46,7 @@ class _SignupState extends State<Signup> {
       TextEditingController(); // display: dd / MM / yyyy
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+      bool get _isDriver => role == UserRole.driver.value;
 
   String role = 'Passenger';
   DateTime? _dob;
@@ -104,23 +107,22 @@ class _SignupState extends State<Signup> {
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (_) => OtpScreen(
-                      otpPurpose:OtpPurpose.register,
-                      contactNumber:  _completePhoneNumber,
+                      otpPurpose: OtpPurpose.register,
+                      contactNumber: _completePhoneNumber,
                       devCode: state.devCode,
                       registrationData: RegistrationData(
                         name: nameController.text.trim(),
-                      fatherName: fatherNameController.text.trim(),
-                      cnic: cnicController.text.trim(),
-                      contactNumber: _completePhoneNumber,
-                      address: addressController.text.trim(),
-                      role: role,
-                      dob: _dobApi,
-                      password: passwordController.text,
-                      fcmToken: fcmToken,
-                      androidId: androidId,
-                      
+                        fatherName: fatherNameController.text.trim(),
+                        cnic: cnicController.text.trim(),
+                        contactNumber: _completePhoneNumber,
+                        address: addressController.text.trim(),
+                        role: role,
+                        dob: _dobApi,
+                        password: passwordController.text,
+                        fcmToken: fcmToken,
+                        androidId: androidId,
                       ),
-                                          ),
+                    ),
                   ),
                   (route) => false,
                 );
@@ -158,6 +160,9 @@ class _SignupState extends State<Signup> {
                         controller: nameController,
                         hintText: 'Enter name',
                         icon: Icons.person,
+                        keyboardType: .text,
+                        textInputFormatter:
+                            CustomTextField.defaultInputFormatter,
                         validator: AuthValidator.validateName,
                       ),
                       CustomTextField(
@@ -165,7 +170,9 @@ class _SignupState extends State<Signup> {
                         labelText: 'Father Name',
                         controller: fatherNameController,
                         hintText: 'Enter father name',
-                        validator: AuthValidator.validateFatherName,
+                        validator: AuthValidator.validateName,
+                        textInputFormatter:
+                            CustomTextField.defaultInputFormatter,
                       ),
                       CustomPhoneField(
                         controller: contactNumberController,
@@ -173,9 +180,7 @@ class _SignupState extends State<Signup> {
                         hintText: '300 1234567',
                         initialCountryCode: 'PK',
                         onPhoneNumberChanged: (phoneNumber) {
-                          setState(() {
-                            _completePhoneNumber = phoneNumber;
-                          });
+                          _completePhoneNumber = phoneNumber;
 
                           debugPrint(
                             'SAVED COMPLETE NUMBER: $_completePhoneNumber',
@@ -189,15 +194,6 @@ class _SignupState extends State<Signup> {
                         icon: Icons.badge_outlined,
                         keyboardType: TextInputType.number,
                         validator: AuthValidator.validateCnic,
-                        // labelTrailing: const Text(
-                        //   'NADRA VERIFIED',
-                        //   style: TextStyle(
-                        //     fontSize: 12,
-                        //     fontWeight: FontWeight.w600,
-                        //     letterSpacing: 0.5,
-                        //     color: AppColors.primary,
-                        //   ),
-                        // ),
                       ),
                       CustomTextField(
                         labelText: 'Residential Address / City',
@@ -205,6 +201,8 @@ class _SignupState extends State<Signup> {
                         hintText: 'e.g. DHA Phase 6, Karachi',
                         icon: Icons.home_outlined,
                         validator: AuthValidator.validateAddress,
+                        textInputFormatter:
+                            CustomTextField.defaultInputFormatter,
                       ),
                       CustomDatePickerField(
                         labelText: 'Date of Birth',
@@ -310,49 +308,13 @@ class _SignupState extends State<Signup> {
   }
 }
 
-class SignupTOPBar extends StatelessWidget {
-  // final String? stepText;
-
-  const SignupTOPBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Material(
-            color: AppColors.surface,
-            shape: const CircleBorder(),
-            elevation: 3,
-            shadowColor: Colors.black12,
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: () => Navigator.pop(context),
-              child: const SizedBox(
-                width: 48,
-                height: 48,
-                child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: 18,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class CustomDatePickerField extends StatefulWidget {
   const CustomDatePickerField({
     super.key,
     required this.labelText,
     required this.onDateSelected,
-    this.hintText = 'DD / MM / YYYY',
+    this.hintText = 'YYYY/MM/DD',
     this.initialDate,
     this.firstDate,
     this.lastDate,
@@ -362,7 +324,7 @@ class CustomDatePickerField extends StatefulWidget {
   final String labelText;
   final String hintText;
   final String errorText;
-  final DateTime? initialDate; // pehle se selected date (optional)
+  final DateTime? initialDate;
   final DateTime? firstDate;
   final DateTime? lastDate;
   final ValueChanged<DateTime> onDateSelected;
@@ -393,7 +355,7 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
   String _two(int n) => n.toString().padLeft(2, '0');
 
   String _format(DateTime d) =>
-      '${_two(d.day)} / ${_two(d.month)} / ${d.year.toString().padLeft(4, '0')}';
+      '${d.year.toString().padLeft(4, '0')} / ${_two(d.month)} /${_two(d.day)}';
 
   Future<void> _pickDate() async {
     final now = DateTime.now();

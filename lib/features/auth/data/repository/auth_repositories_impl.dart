@@ -3,6 +3,7 @@ import 'package:star_drive/features/auth/data/model/login_request_model.dart';
 import 'package:star_drive/features/auth/data/model/otp_request_model.dart';
 import 'package:star_drive/features/auth/data/model/reset_password_model.dart';
 import 'package:star_drive/features/auth/data/model/reset_response_model.dart';
+import 'package:star_drive/features/auth/data/model/verify_request_model.dart';
 import 'package:star_drive/features/auth/domain/entities/otp_details.dart';
 import 'package:star_drive/features/auth/domain/enums/otp_purpose.dart';
 import 'package:star_drive/features/auth/domain/repository/auth_repoitory.dart';
@@ -28,21 +29,27 @@ Future<OtpDetails> sendOtp({
     
     ),
   );
+ final otpDetails = result.data;
 
-  return result.toEntity();
+if (otpDetails == null) {
+  throw Exception('OTP response data is missing.');
+}
+  return otpDetails;
 }
 
 @override
 Future<void> verifyOtp({
   required String contactNumber,
-  required OtpPurpose purpose,
+  
   required String code,
 }) async {
-  await remoteDataSource.verifyOtp(
+  final request = VerifyRequestModel(
     contactNumber: contactNumber,
-    purpose: purpose,
-    code: code,
+    otpCode: code,
+
   );
+
+  await remoteDataSource.verifyOtp(request);
 }
   @override
   Future<AuthUser> registerWithDetails({

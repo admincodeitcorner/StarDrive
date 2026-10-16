@@ -14,7 +14,7 @@ class VerifyOtpUseCase {
   }) {
     return repository.verifyOtp(
       contactNumber: contactNumber,
-      purpose: purpose,
+      
       code: code,
     );
   }

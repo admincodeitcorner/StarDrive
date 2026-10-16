@@ -5,25 +5,37 @@ class AuthValidator {
     if (value == null || value.trim().isEmpty) {
       return 'Name is required';
     }
+      final name = value.trim();
 
-    if (value.trim().length < 3) {
+    if (name.length < 3) {
       return 'Name must contain at least 3 characters';
     }
+   final nameRegex = RegExp(
+    r"^[a-zA-Z\u0600-\u06FF\s'-]+$",
+  );
 
+  if (!nameRegex.hasMatch(name)) {
+    return 'Name can only contain letters and spaces';
+  }
+
+  // Prevent names containing only spaces or symbols
+  if (!RegExp(r'[a-zA-Z\u0600-\u06FF]').hasMatch(name)) {
+    return 'Please enter a valid name';
+  }
     return null;
   }
 
-  static String? validateFatherName(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Father name is required';
-    }
+  // static String? validateFatherName(String? value) {
+  //   if (value == null || value.trim().isEmpty) {
+  //     return 'Father name is required';
+  //   }
 
-    if (value.trim().length < 3) {
-      return 'Father name must contain at least 3 characters';
-    }
+  //   if (value.trim().length < 3) {
+  //     return 'Father name must contain at least 3 characters';
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
   static String? validateCnic(String? value) {
     if (value == null || value.trim().isEmpty) {
