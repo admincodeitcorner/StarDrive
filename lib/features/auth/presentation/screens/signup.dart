@@ -4,7 +4,7 @@ import 'package:star_drive/features/auth/presentation/bloc/register/register_blo
 import 'package:star_drive/features/auth/presentation/screens/login_screen.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_phone_field.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_text_field.dart';
-import 'package:star_drive/features/map/map_screen.dart';
+import 'package:star_drive/features/map/presentation/screen/map_screen.dart';
 
 import '../bloc/register/register_event.dart';
 import '../bloc/register/register_state.dart';

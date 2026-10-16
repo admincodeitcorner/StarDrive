@@ -6,10 +6,11 @@ import 'package:star_drive/features/auth/presentation/bloc/login/login_bloc.dart
 import 'package:star_drive/features/auth/presentation/bloc/register/register_bloc.dart';
 import 'package:star_drive/features/auth/presentation/screens/login_screen.dart';
 import 'package:star_drive/features/auth/presentation/screens/signup.dart';
+import 'package:star_drive/features/map/presentation/screen/map_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-Bloc.observer = AppBlocObserver();
+  Bloc.observer = AppBlocObserver();
   setupDependencies();
 
   runApp(const StarDriveApp());
@@ -21,23 +22,19 @@ class StarDriveApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-    providers: [
-BlocProvider<AuthBloc>(
-          create: (_) => sl<AuthBloc>(),
-          child: Signup(),
-
-        ),
+      providers: [
+        BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>(), child: Signup()),
         BlocProvider<LoginBloc>(
           create: (_) => sl<LoginBloc>(),
           child: LoginScreen(),
         ),
-    ], 
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
 
         home: BlocProvider<LoginBloc>(
           create: (_) => sl<LoginBloc>(),
-          child: LoginScreen(),
+          child: MapScreen(),
         ),
       ),
     );

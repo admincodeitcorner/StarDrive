@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:label="star_drive"
         android:name="${applicationName}"
@@ -42,8 +44,4 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-<!-- Include only if your app benefits from precise location access. -->
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest>

@@ -8,7 +8,7 @@ import 'package:star_drive/features/auth/presentation/screens/forgot_screen.dart
 import 'package:star_drive/features/auth/presentation/screens/signup.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_phone_field.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_text_field.dart';
-import 'package:star_drive/features/map/map_screen.dart';
+import 'package:star_drive/features/map/presentation/screen/map_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
