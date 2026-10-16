@@ -1,5 +1,10 @@
 import 'package:star_drive/features/auth/data/dataresource/auth_remote_datasource.dart';
 import 'package:star_drive/features/auth/data/model/login_request_model.dart';
+import 'package:star_drive/features/auth/data/model/otp_request_model.dart';
+import 'package:star_drive/features/auth/data/model/reset_password_model.dart';
+import 'package:star_drive/features/auth/data/model/reset_response_model.dart';
+import 'package:star_drive/features/auth/domain/entities/otp_details.dart';
+import 'package:star_drive/features/auth/domain/enums/otp_purpose.dart';
 import 'package:star_drive/features/auth/domain/repository/auth_repoitory.dart';
 
 import '../../domain/entities/auth_user.dart';
@@ -9,7 +14,36 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
 
   AuthRepositoryImpl(this.remoteDataSource);
+@override
+Future<OtpDetails> sendOtp({
+  required String contactNumber,
+   String? cnic,
+  required OtpPurpose purpose
+}) async {
+  final result = await remoteDataSource.sendOtp(
+    SendOtpRequestModel(
+      contactNumber: contactNumber,
+      cnic: cnic,
+      purpose: purpose
+    
+    ),
+  );
 
+  return result.toEntity();
+}
+
+@override
+Future<void> verifyOtp({
+  required String contactNumber,
+  required OtpPurpose purpose,
+  required String code,
+}) async {
+  await remoteDataSource.verifyOtp(
+    contactNumber: contactNumber,
+    purpose: purpose,
+    code: code,
+  );
+}
   @override
   Future<AuthUser> registerWithDetails({
     required String name,
@@ -20,6 +54,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String role,
     required String dob,
     required String password,
+    required String otpCode,
     required String fcmToken,
     required String androidId,
   }) async {
@@ -33,7 +68,8 @@ class AuthRepositoryImpl implements AuthRepository {
       dob: dob,
       password: password,
       fcmToken: fcmToken,
-      androidId: androidId,
+      androidId: androidId, 
+      otpCode: otpCode
     );
 
     return remoteDataSource.register(request);
@@ -54,4 +90,10 @@ Future<AuthUser> loginWithCredentials({
 
   return await remoteDataSource.login(request);
 }
+ @override
+  Future<ResetPasswordResponseModel> resetPassword(
+    ResetPasswordRequestModel request,
+  ) {
+    return remoteDataSource.resetPassword(request);
+  }
 }

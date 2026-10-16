@@ -4,7 +4,9 @@ import 'package:star_drive/app_bloc_observer.dart';
 import 'package:star_drive/core/di/injector.dart';
 import 'package:star_drive/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:star_drive/features/auth/presentation/bloc/register/register_bloc.dart';
+import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_password_bloc.dart';
 import 'package:star_drive/features/auth/presentation/screens/login_screen.dart';
+import 'package:star_drive/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:star_drive/features/auth/presentation/screens/signup.dart';
 import 'package:star_drive/features/map/presentation/screen/map_screen.dart';
 
@@ -23,19 +25,20 @@ class StarDriveApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>(), child: Signup()),
+        BlocProvider<AuthBloc>(
+          create: (_) => sl<AuthBloc>(),
+        ),
+        BlocProvider<ResetPasswordBloc>(
+          create: (_) => sl<ResetPasswordBloc>(),
+        ),
         BlocProvider<LoginBloc>(
           create: (_) => sl<LoginBloc>(),
-          child: LoginScreen(),
         ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-
-        home: BlocProvider<LoginBloc>(
-          create: (_) => sl<LoginBloc>(),
-          child: MapScreen(),
-        ),
+        theme: ThemeData(),
+        home: LoginScreen(),
       ),
     );
   }

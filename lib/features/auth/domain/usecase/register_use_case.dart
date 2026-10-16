@@ -18,6 +18,7 @@ class RegisterUser {
     required String password,
     required String fcmToken,
     required String androidId,
+    required String otpCode,
   }) {
     return repository.registerWithDetails(
       name: name,
@@ -28,6 +29,7 @@ class RegisterUser {
       role: role,
       dob: dob,
       password: password,
+      otpCode: otpCode,
       fcmToken: fcmToken,
       androidId: androidId,
     );

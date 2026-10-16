@@ -1,10 +1,26 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+
 import 'package:star_drive/core/constant/apis_endpoints.dart';
 
 
 class DioClient {
   final Dio dio;
+  void setupApiLogging() {
+  if (!kDebugMode) return;
 
+  dio.interceptors.add(
+  LogInterceptor(
+    request: true,
+    requestHeader: false,
+    requestBody: true,
+    responseHeader: false,
+    responseBody: true,
+    error: true,
+    logPrint: (object) => debugPrint('$object'),
+  ),
+);
+}
   DioClient()
       : dio = Dio(
           BaseOptions(
@@ -19,3 +35,4 @@ class DioClient {
           ),
         );
 }
+

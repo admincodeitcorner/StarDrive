@@ -13,7 +13,7 @@ class AuthUser extends Equatable {
   final bool isApproved;
   final double passengerRating;
   final bool isDriver;
-  final String driverStatus;
+  final String? driverStatus;
   final double totalEarning;
   final String fcmToken;
   final String androidId;
@@ -32,7 +32,7 @@ class AuthUser extends Equatable {
     required this.isApproved,
     required this.passengerRating,
     required this.isDriver,
-    required this.driverStatus,
+     this.driverStatus,
     required this.totalEarning,
     required this.fcmToken,
     required this.androidId,
@@ -41,22 +41,22 @@ class AuthUser extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        fatherName,
-        cnic,
-        contactNumber,
-        address,
-        role,
-        dob,
-        isActive,
-        isApproved,
-        passengerRating,
-        isDriver,
-        driverStatus,
-        totalEarning,
-        fcmToken,
-        androidId,
-        token,
-      ];
+    id,
+    name,
+    fatherName,
+    cnic,
+    contactNumber,
+    address,
+    role,
+    dob,
+    isActive,
+    isApproved,
+    passengerRating,
+    isDriver,
+    driverStatus,
+    totalEarning,
+    fcmToken,
+    androidId,
+    token,
+  ];
 }
