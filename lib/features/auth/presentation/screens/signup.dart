@@ -23,7 +23,7 @@ import 'package:star_drive/features/auth/presentation/widgets/custom_text_field.
 import 'package:star_drive/features/auth/presentation/widgets/password_text_field.dart';
 import 'package:star_drive/features/auth/presentation/widgets/sign_up_top_bar.dart';
 import 'package:star_drive/features/auth/presentation/widgets/social_button.dart';
-import 'package:star_drive/core/constant/api_colors.dart';
+import 'package:star_drive/core/constant/app_colors.dart';
 
 import '../bloc/register/register_event.dart';
 import '../bloc/register/register_state.dart';

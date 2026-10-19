@@ -10,7 +10,7 @@ sealed class AuthEvent extends Equatable {
 
 final class SendOtpRequested extends AuthEvent {
   final String contactNumber;
-  final String? cnic; // sirf Driver registration mein
+  final String? cnic;
   final OtpPurpose purpose;
 
   const SendOtpRequested({

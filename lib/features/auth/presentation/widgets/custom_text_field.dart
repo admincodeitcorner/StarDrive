@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:star_drive/core/constant/api_colors.dart';
+import 'package:star_drive/core/constant/app_colors.dart';
 import 'package:star_drive/features/auth/presentation/widgets/auth_field_lable.dart';
 
 class CustomTextField extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:star_drive/core/constant/api_colors.dart';
+import 'package:star_drive/core/constant/app_colors.dart';
 
 class AuthRedirectText extends StatelessWidget {
   final String message;

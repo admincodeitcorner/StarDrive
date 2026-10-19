@@ -7,6 +7,7 @@ import 'package:star_drive/features/auth/presentation/bloc/register/register_blo
 import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_password_bloc.dart';
 import 'package:star_drive/features/auth/presentation/screens/login_screen.dart';
 import 'package:star_drive/features/auth/presentation/screens/reset_password_screen.dart';
+import 'package:star_drive/features/auth/presentation/screens/role_selection_screen.dart';
 import 'package:star_drive/features/auth/presentation/screens/signup.dart';
 import 'package:star_drive/features/map/presentation/screen/map_screen.dart';
 
@@ -38,7 +39,7 @@ class StarDriveApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(),
-        home: LoginScreen(),
+        home: RoleSelectionScreen(),
       ),
     );
   }

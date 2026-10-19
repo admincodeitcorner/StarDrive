@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:star_drive/core/constant/api_colors.dart';
+import 'package:star_drive/core/constant/app_colors.dart';
 import 'package:star_drive/features/auth/presentation/widgets/auth_field_lable.dart';
 
 /// Passenger / Driver segmented toggle (dropdown ki jagah).

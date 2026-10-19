@@ -53,17 +53,17 @@ Future<void> verifyOtp({
 }
   @override
   Future<AuthUser> registerWithDetails({
-    required String name,
-    required String fatherName,
-    required String cnic,
-    required String contactNumber,
-    required String address,
-    required String role,
-    required String dob,
-    required String password,
-    required String otpCode,
-    required String fcmToken,
-    required String androidId,
+required String name,
+  required String contactNumber,
+  required String role,
+  required String password,
+  required String otpCode,
+  required String fcmToken,
+  required String androidId,
+  String? fatherName,
+  String? cnic,
+  String? address,
+  String? dob,
   }) async {
     final request = RegisterRequestModel(
       name: name,
