@@ -8,4 +8,6 @@ class ApiEndpoints {
   static const String sendOtp = 'otp/send';
   static const verifyOtp = 'otp/verify';
   static const resetPassword = 'auth/reset-password';
+  static const driverDoc = '/driver/documents';
+
 }

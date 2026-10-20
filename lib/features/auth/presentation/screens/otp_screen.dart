@@ -112,8 +112,10 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Verify OTP'),
-      automaticallyImplyLeading: false,),
+      appBar: AppBar(
+        title: const Text('Verify OTP'),
+        automaticallyImplyLeading: false,
+      ),
       body: SafeArea(
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {

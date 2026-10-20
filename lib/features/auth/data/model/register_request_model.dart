@@ -27,16 +27,16 @@ class RegisterRequestModel {
   });
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'contactNumber': contactNumber,
-        'role': role,
-        'password': password,
-        'otpCode': otpCode,
-        'fcmToken': fcmToken,
-        'androidId': androidId,
-        if (fatherName != null) 'fatherName': fatherName,
-        if (cnic != null) 'cnic': cnic,
-        if (address != null) 'address': address,
-        if (dob != null) 'dob': dob,
-      };
+    'name': name,
+    'contactNumber': contactNumber,
+    'role': role,
+    'password': password,
+    'otpCode': otpCode,
+    'fcmToken': fcmToken,
+    'androidId': androidId,
+    if (fatherName != null) 'fatherName': fatherName,
+    if (cnic != null) 'cnic': cnic,
+    if (address != null) 'address': address,
+    if (dob != null) 'dob': dob,
+  };
 }

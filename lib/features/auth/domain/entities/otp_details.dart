@@ -12,9 +12,5 @@ class OtpDetails extends Equatable {
   });
 
   @override
-  List<Object?> get props => [
-        expiresInSeconds,
-        resendAfterSeconds,
-        devCode,
-      ];
+  List<Object?> get props => [expiresInSeconds, resendAfterSeconds, devCode];
 }

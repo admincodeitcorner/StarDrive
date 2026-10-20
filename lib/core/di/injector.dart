@@ -6,7 +6,7 @@ import 'package:star_drive/features/auth/domain/repository/auth_repoitory.dart';
 import 'package:star_drive/features/auth/domain/usecase/login_use_case.dart';
 import 'package:star_drive/features/auth/domain/usecase/register_use_case.dart';
 import 'package:star_drive/features/auth/domain/usecase/reset_password_usecase.dart';
-import 'package:star_drive/features/auth/domain/usecase/send_otp.dart';
+import 'package:star_drive/features/auth/domain/usecase/send_otp_usecase.dart';
 import 'package:star_drive/features/auth/domain/usecase/verified_otp_usecase.dart';
 import 'package:star_drive/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:star_drive/features/auth/presentation/bloc/register/register_bloc.dart';
@@ -14,70 +14,44 @@ import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_
 
 import '../network/dio_client.dart';
 
-
 final sl = GetIt.instance;
 
 void setupDependencies() {
   // Shared HTTP client
-  sl.registerLazySingleton<DioClient>(
-    () => DioClient(),
-  );
+  sl.registerLazySingleton<DioClient>(() => DioClient());
 
-  sl.registerLazySingleton<Dio>(
-    () => sl<DioClient>().dio,
-  );
+  sl.registerLazySingleton<Dio>(() => sl<DioClient>().dio);
 
   // Data source
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(sl<Dio>()),
+    () => AuthRemoteDataSourceImpl(sl<Dio>(), sl<DioClient>()),
   );
 
   // Repository implementation
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(
-      sl<AuthRemoteDataSource>(),
-    ),
+    () => AuthRepositoryImpl(sl<AuthRemoteDataSource>()),
   );
 
   // Use case
   sl.registerLazySingleton<RegisterUser>(
-    () => RegisterUser(
-      sl<AuthRepository>(),
-    ),
+    () => RegisterUser(sl<AuthRepository>()),
   );
-sl.registerLazySingleton<LoginUseCase>(
-    () => LoginUseCase(
-      sl<AuthRepository>(),
-    ),
+  sl.registerLazySingleton<LoginUseCase>(
+    () => LoginUseCase(sl<AuthRepository>()),
   );
-  
 
   // A new BLoC instance for each provider
- sl.registerLazySingleton<SendOtp>(
-  () => SendOtp(sl()),
-);
+  sl.registerLazySingleton<SendOtpUsecase>(() => SendOtpUsecase(sl()));
 
-sl.registerLazySingleton<VerifyOtpUseCase>(
-  () => VerifyOtpUseCase(sl()),
-);
-sl.registerLazySingleton<ResetPasswordUseCase>(
-    () => ResetPasswordUseCase(
-      sl<AuthRepository>(),
-    ),
+  sl.registerLazySingleton<VerifyOtpUseCase>(() => VerifyOtpUseCase(sl()));
+  sl.registerLazySingleton<ResetPasswordUseCase>(
+    () => ResetPasswordUseCase(sl<AuthRepository>()),
   );
-sl.registerFactory<AuthBloc>(
-  () => AuthBloc(
-    registerUser: sl(),
-    sendOtp: sl(),
-    verifyOtpUseCase: sl(),
-  ),
-);
-   sl.registerFactory<LoginBloc>(
-    () => LoginBloc(sl<LoginUseCase>() ),
+  sl.registerFactory<AuthBloc>(
+    () => AuthBloc(registerUser: sl(), sendOtp: sl(), verifyOtpUseCase: sl()),
   );
+  sl.registerFactory<LoginBloc>(() => LoginBloc(sl<LoginUseCase>()));
   sl.registerFactory<ResetPasswordBloc>(
-  () => ResetPasswordBloc(
-    resetPasswordUseCase: sl<ResetPasswordUseCase>(),
-  ),
-);
+    () => ResetPasswordBloc(resetPasswordUseCase: sl<ResetPasswordUseCase>()),
+  );
 }

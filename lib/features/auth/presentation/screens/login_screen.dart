@@ -7,7 +7,9 @@ import 'package:star_drive/features/auth/presentation/bloc/login/login_event.dar
 import 'package:star_drive/features/auth/presentation/bloc/login/login_state.dart';
 
 import 'package:star_drive/features/auth/presentation/screens/forgot_screen.dart';
+import 'package:star_drive/features/auth/presentation/screens/passanger_signup_screen.dart';
 import 'package:star_drive/features/auth/presentation/screens/signup.dart';
+import 'package:star_drive/features/auth/presentation/widgets/auth_header.dart';
 import 'package:star_drive/features/auth/presentation/widgets/auth_redirect_text.dart';
 import 'package:star_drive/features/auth/presentation/widgets/auth_screen_header.dart';
 
@@ -16,7 +18,7 @@ import 'package:star_drive/features/auth/presentation/widgets/custom_divider.dar
 import 'package:star_drive/features/auth/presentation/widgets/custom_phone_field.dart';
 import 'package:star_drive/features/dashboard/presentation/screens/home.screen.dart';
 
-import '../../../map/presentation/screen/map_screen.dart';
+
 import '../widgets/password_text_field.dart';
 import '../widgets/social_button.dart';
 
@@ -78,122 +80,123 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: BlocConsumer<LoginBloc, LoginState>(
-          listener: _onLoginState,
-          builder: (context, state) {
-            final isLoading = state is LoginLoading;
-
-            return LayoutBuilder(
-              builder: (context, constraints) => SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 24),
-                          const AuthScreenHeader(
-                            titlePrefix: 'Login to Star',
-                            titleHighlight: 'Drive',
-                            subtitle:
-                                'Welcome back! Enter your credentials to\nmanage your trips and bookings.',
-                          ),
-                          const SizedBox(height: 32),
-                          CustomPhoneField(
-                            controller: _contactNumberController,
-                            labelText: 'Contact Number',
-                            hintText: '300 1234567',
-                            initialCountryCode: 'PK',
-                            onPhoneNumberChanged: (phoneNumber) {
-                        _completePhoneNumber = phoneNumber;
-
-
-                              debugPrint(
-                                'SAVED COMPLETE NUMBER: $_completePhoneNumber',
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 20),
-
-                          PasswordTextField(controller: _passwordController),
-
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () => _push(ForgotScreen()),
-                              child: const Text(
-                                'Forgot Password?',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.primary,
+      body: AuthBackground(
+        child: SafeArea(
+          child: BlocConsumer<LoginBloc, LoginState>(
+            listener: _onLoginState,
+            builder: (context, state) {
+              final isLoading = state is LoginLoading;
+        
+              return LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: IntrinsicHeight(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const SizedBox(height: 24),
+                            const AuthScreenHeader(
+                              titlePrefix: 'Login to Star',
+                              titleHighlight: 'Drive',
+                              subtitle:
+                                  'Welcome back! Enter your credentials to\nmanage your trips and bookings.',
+                            ),
+                            const SizedBox(height: 32),
+                            CustomPhoneField(
+                              controller: _contactNumberController,
+                              labelText: 'Contact Number',
+                              hintText: '300 1234567',
+                              initialCountryCode: 'PK',
+                              onPhoneNumberChanged: (phoneNumber) {
+                                _completePhoneNumber = phoneNumber;
+        
+                                debugPrint(
+                                  'SAVED COMPLETE NUMBER: $_completePhoneNumber',
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 20),
+        
+                            PasswordTextField(controller: _passwordController),
+        
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () => _push(ForgotScreen()),
+                                child: const Text(
+                                  'Forgot Password?',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.primary,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-
-                          AuthButton(
-                            text: 'Log In',
-                            trailingIcon: Icons.arrow_forward_rounded,
-                            isLoading: isLoading,
-                            onPressed: _login,
-                          ),
-                          const SizedBox(height: 20),
-
-                          const CustomDivider(),
-                          const SizedBox(height: 20),
-
-                          Row(
-                            children: [
-                              Expanded(
-                                child: SocialButton(
-                                  text: 'Apple ID',
-                                  icon: const Icon(Icons.apple, size: 24),
-                                  onPressed: () {},
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: SocialButton(
-                                  text: 'Google',
-                                  icon: Image.asset(
-                                    'assets/icons/google.png',
-                                    height: 22,
-                                    errorBuilder: (_, __, ___) => const Icon(
-                                      Icons.g_mobiledata,
-                                      size: 28,
-                                    ),
+                            const SizedBox(height: 16),
+        
+                            AuthButton(
+                              text: 'Log In',
+                              trailingIcon: Icons.arrow_forward_rounded,
+                              isLoading: isLoading,
+                              onPressed: _login,
+                            ),
+                            const SizedBox(height: 20),
+        
+                            const CustomDivider(),
+                            const SizedBox(height: 20),
+        
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SocialButton(
+                                    text: 'Apple ID',
+                                    icon: const Icon(Icons.apple, size: 24),
+                                    onPressed: () {},
                                   ),
-                                  onPressed: () {},
                                 ),
-                              ),
-                            ],
-                          ),
-
-                          const Spacer(),
-                          const SizedBox(height: 24),
-
-                          AuthRedirectText(
-                            message: "Don't have an account?",
-                            actionText: 'Register',
-                            onTap: () => _push(Signup()),
-                          ),
-                          const SizedBox(height: 16),
-
-                          const SizedBox(height: 20),
-                        ],
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: SocialButton(
+                                    text: 'Google',
+                                    icon: Image.asset(
+                                      'assets/icons/google.png',
+                                      height: 22,
+                                      errorBuilder: (_, __, ___) => const Icon(
+                                        Icons.g_mobiledata,
+                                        size: 28,
+                                      ),
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                                ),
+                              ],
+                            ),
+        
+                            const Spacer(),
+                            const SizedBox(height: 24),
+        
+                            AuthRedirectText(
+                              message: "Don't have an account?",
+                              actionText: 'Register',
+                              onTap: () => _push(PassengerSignUpScreen()),
+                            ),
+                            const SizedBox(height: 16),
+        
+                            const SizedBox(height: 20),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

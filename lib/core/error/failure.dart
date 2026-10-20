@@ -5,9 +5,7 @@ abstract interface class Failure {
 }
 
 class ServerFailure extends Failure {
-  const ServerFailure([
-    super.message = 'Server error occurred',
-  ]);
+  const ServerFailure([super.message = 'Server error occurred']);
 }
 
 class NetworkFailure extends Failure {
@@ -17,19 +15,13 @@ class NetworkFailure extends Failure {
 }
 
 class TimeoutFailure extends Failure {
-  const TimeoutFailure([
-    super.message = 'Request timed out',
-  ]);
+  const TimeoutFailure([super.message = 'Request timed out']);
 }
 
 class ValidationFailure extends Failure {
-  const ValidationFailure([
-    super.message = 'Invalid input',
-  ]);
+  const ValidationFailure([super.message = 'Invalid input']);
 }
 
 class UnexpectedFailure extends Failure {
-  const UnexpectedFailure([
-    super.message = 'Something went wrong',
-  ]);
+  const UnexpectedFailure([super.message = 'Something went wrong']);
 }

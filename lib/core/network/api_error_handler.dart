@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:star_drive/core/error/exception.dart';
 
-
-
 import 'package:dio/dio.dart';
 
 class ApiErrorHandler {
@@ -20,9 +18,7 @@ class ApiErrorHandler {
 
       case DioExceptionType.badResponse:
         final body = error.response?.data;
-        final message = body is Map
-            ? body['message']?.toString()
-            : null;
+        final message = body is Map ? body['message']?.toString() : null;
 
         return ServerException(
           message: message?.isNotEmpty == true

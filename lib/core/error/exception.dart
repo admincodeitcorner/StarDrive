@@ -19,15 +19,11 @@ class NetworkException implements Exception {
 class TimeoutException implements Exception {
   final String message;
 
-  const TimeoutException({
-    this.message = 'Request timed out',
-  });
+  const TimeoutException({this.message = 'Request timed out'});
 }
 
 class ParsingException implements Exception {
   final String message;
 
-  const ParsingException({
-    this.message = 'Invalid server response',
-  });
+  const ParsingException({this.message = 'Invalid server response'});
 }

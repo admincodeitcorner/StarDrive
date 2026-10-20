@@ -1,7 +1,5 @@
 import 'package:star_drive/core/constant/apis_endpoints.dart';
 
-
-
 class ApiResponse<T> {
   final String code;
   final String message;

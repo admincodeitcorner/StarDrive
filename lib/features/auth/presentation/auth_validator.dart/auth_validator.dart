@@ -5,23 +5,21 @@ class AuthValidator {
     if (value == null || value.trim().isEmpty) {
       return 'Name is required';
     }
-      final name = value.trim();
+    final name = value.trim();
 
     if (name.length < 3) {
       return 'Name must contain at least 3 characters';
     }
-   final nameRegex = RegExp(
-    r"^[a-zA-Z\u0600-\u06FF\s'-]+$",
-  );
+    final nameRegex = RegExp(r"^[a-zA-Z\u0600-\u06FF\s'-]+$");
 
-  if (!nameRegex.hasMatch(name)) {
-    return 'Name can only contain letters and spaces';
-  }
+    if (!nameRegex.hasMatch(name)) {
+      return 'Name can only contain letters and spaces';
+    }
 
-  // Prevent names containing only spaces or symbols
-  if (!RegExp(r'[a-zA-Z\u0600-\u06FF]').hasMatch(name)) {
-    return 'Please enter a valid name';
-  }
+    // Prevent names containing only spaces or symbols
+    if (!RegExp(r'[a-zA-Z\u0600-\u06FF]').hasMatch(name)) {
+      return 'Please enter a valid name';
+    }
     return null;
   }
 

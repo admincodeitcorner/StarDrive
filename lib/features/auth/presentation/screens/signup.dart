@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:star_drive/features/auth/data/model/registration_data.dart';
 import 'package:star_drive/features/auth/domain/enums/otp_purpose.dart';
@@ -47,7 +48,7 @@ class _SignupState extends State<Signup> {
       TextEditingController(); // display: dd / MM / yyyy
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-      bool get _isDriver => role == UserRole.driver.value;
+  bool get _isDriver => role == UserRole.driver.value;
 
   String role = 'Passenger';
   DateTime? _dob;
@@ -138,166 +139,145 @@ class _SignupState extends State<Signup> {
             builder: (context, state) {
               final isLoading = state is AuthLoading;
 
-              return Form(
-                key: _formKey,
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SignupTOPBar(),
-                      const AuthScreenHeader(
-                        titlePrefix: 'Register With ',
-                        titleHighlight: 'StarDrive',
-                        subtitle:
-                            'Create an account to book premium rides or earn as a verified partner driver.',
-                      ),
-                      AuthRoleSelector(
-                        value: role,
-                        onChanged: (v) => setState(() => role = v),
-                      ),
-                      CustomTextField(
-                        labelText: 'Name',
-                        controller: nameController,
-                        hintText: 'Enter name',
-                        icon: Icons.person,
-                        keyboardType: .text,
-                        textInputFormatter:
-                            CustomTextField.defaultInputFormatter,
-                        validator: AuthValidator.validateName,
-                      ),
-                      CustomTextField(
-                        icon: Icons.person,
-                        labelText: 'Father Name',
-                        controller: fatherNameController,
-                        hintText: 'Enter father name',
-                        validator: AuthValidator.validateName,
-                        textInputFormatter:
-                            CustomTextField.defaultInputFormatter,
-                      ),
-                      CustomPhoneField(
-                        controller: contactNumberController,
-                        labelText: 'Contact Number',
-                        hintText: '300 1234567',
-                        initialCountryCode: 'PK',
-                        onPhoneNumberChanged: (phoneNumber) {
-                          _completePhoneNumber = phoneNumber;
+              return LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  child: IntrinsicHeight(
+                    child: Form(
+                      key: _formKey,
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const SignupTOPBar(),
+                            const AuthScreenHeader(
+                              titlePrefix: 'Register With ',
+                              titleHighlight: 'StarDrive',
+                              subtitle:
+                                  'Create an account to book premium rides or earn as a verified partner driver.',
+                            ),
+                            AuthRoleSelector(
+                              value: role,
+                              onChanged: (v) => setState(() => role = v),
+                            ),
+                            CustomTextField(
+                              labelText: 'Name',
+                              controller: nameController,
+                              hintText: 'Enter name',
+                              icon: Icons.person,
+                              keyboardType: .text,
+                              textInputFormatter:
+                                  CustomTextField.defaultInputFormatter,
+                              validator: AuthValidator.validateName,
+                            ),
+                            CustomTextField(
+                              icon: Icons.person,
+                              labelText: 'Father Name',
+                              controller: fatherNameController,
+                              hintText: 'Enter father name',
+                              validator: AuthValidator.validateName,
+                              textInputFormatter:
+                                  CustomTextField.defaultInputFormatter,
+                            ),
+                            CustomPhoneField(
+                              controller: contactNumberController,
+                              labelText: 'Contact Number',
+                              hintText: '300 1234567',
+                              initialCountryCode: 'PK',
+                              onPhoneNumberChanged: (phoneNumber) {
+                                _completePhoneNumber = phoneNumber;
 
-                          debugPrint(
-                            'SAVED COMPLETE NUMBER: $_completePhoneNumber',
-                          );
-                        },
-                      ),
-                      CustomTextField(
-                        labelText: 'CNIC Number',
-                        controller: cnicController,
-                        hintText: '42101-XXXXXXX-X',
-                        icon: Icons.badge_outlined,
-                        keyboardType: TextInputType.number,
-                        validator: AuthValidator.validateCnic,
-                      ),
-                      CustomTextField(
-                        labelText: 'Residential Address / City',
-                        controller: addressController,
-                        hintText: 'e.g. DHA Phase 6, Karachi',
-                        icon: Icons.home_outlined,
-                        validator: AuthValidator.validateAddress,
-                        textInputFormatter:
-                            CustomTextField.defaultInputFormatter,
-                      ),
-                      CustomDatePickerField(
-                        labelText: 'Date of Birth',
-                        initialDate: _dob,
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime.now(),
-                        onDateSelected: (selectedDate) {
-                          _dob = selectedDate;
-                        },
-                      ),
-                      // CustomTextField(
-                      //   labelText: 'Date of Birth',
-                      //   controller: dateOfBirthController,
-                      //   hintText: 'DD / MM / YYYY',
-                      //   readOnly: true,
-                      //   onTap: _selectDate,
-                      //   suffixIcon: const Icon(
-                      //     Icons.calendar_month_outlined,
-                      //     color: AppColors.textHint,
-                      //   ),
-                      //   validator: (value) {
-                      //     if (value == null || value.isEmpty) {
-                      //       return 'Please select date of birth';
-                      //     }
-                      //     return null;
-                      //   },
-                      // ),
-                      PasswordTextField(
-                        controller: passwordController,
-                        validator: AuthValidator.validatePassword,
-                      ),
-                      PasswordTextField(
-                        labelText: 'Confirm Password',
-                        hintText: 'Re-enter password',
-                        controller: confirmPasswordController,
-                        validator: (value) =>
-                            AuthValidator.validateConfirmPassword(
-                              value,
-                              passwordController.text,
+                                debugPrint(
+                                  'SAVED COMPLETE NUMBER: $_completePhoneNumber',
+                                );
+                              },
                             ),
-                      ),
-                      const SizedBox(height: 20),
-                      AuthButton(
-                        text: 'Register Account',
-                        trailingIcon: Icons.arrow_forward_rounded,
-                        isLoading: isLoading,
-                        onPressed: _register,
-                      ),
-                      const SizedBox(height: 16),
-                      const CustomDivider(),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: SocialButton(
-                              text: 'Apple ID',
-                              icon: const Icon(
-                                Icons.apple,
-                                size: 22,
-                                color: AppColors.textPrimary,
-                              ),
-                              onPressed: () {}, // TODO: Apple sign in
+                            CustomTextField(
+                              labelText: 'CNIC Number',
+                              controller: cnicController,
+                              hintText: '42101-XXXXXXX-X',
+                              icon: Icons.badge_outlined,
+                              keyboardType: TextInputType.number,
+                              validator: AuthValidator.validateCnic,
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: SocialButton(
-                              text: 'Google',
-                              icon: const Text(
-                                'G',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF4285F4),
+                            CustomTextField(
+                              labelText: 'Residential Address / City',
+                              controller: addressController,
+                              hintText: 'e.g. DHA Phase 6, Karachi',
+                              icon: Icons.home_outlined,
+                              validator: AuthValidator.validateAddress,
+                              textInputFormatter:
+                                  CustomTextField.defaultInputFormatter,
+                            ),
+                            CustomDatePickerField(
+                              labelText: 'Date of Birth',
+                              initialDate: _dob,
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime.now(),
+                              onDateSelected: (selectedDate) {
+                                _dob = selectedDate;
+                              },
+                            ),
+                            // CustomTextField(
+                            //   labelText: 'Date of Birth',
+                            //   controller: dateOfBirthController,
+                            //   hintText: 'DD / MM / YYYY',
+                            //   readOnly: true,
+                            //   onTap: _selectDate,
+                            //   suffixIcon: const Icon(
+                            //     Icons.calendar_month_outlined,
+                            //     color: AppColors.textHint,
+                            //   ),
+                            //   validator: (value) {
+                            //     if (value == null || value.isEmpty) {
+                            //       return 'Please select date of birth';
+                            //     }
+                            //     return null;
+                            //   },
+                            // ),
+                            PasswordTextField(
+                              controller: passwordController,
+                              validator: AuthValidator.validatePassword,
+                            ),
+                            PasswordTextField(
+                              labelText: 'Confirm Password',
+                              hintText: 'Re-enter password',
+                              controller: confirmPasswordController,
+                              validator: (value) =>
+                                  AuthValidator.validateConfirmPassword(
+                                    value,
+                                    passwordController.text,
+                                  ),
+                            ),
+                            const SizedBox(height: 20),
+                            AuthButton(
+                              text: 'Register Account',
+                              trailingIcon: Icons.arrow_forward_rounded,
+                              isLoading: isLoading,
+                              onPressed: _register,
+                            ),
+                            const SizedBox(height: 16),
+                            const CustomDivider(),
+                            const SizedBox(height: 16),
+
+                            const SizedBox(height: 24),
+                            AuthRedirectText(
+                              message: 'Already have an account?',
+                              actionText: 'Log In',
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => LoginScreen(),
                                 ),
                               ),
-                              onPressed: () {}, // TODO: Google sign in
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      AuthRedirectText(
-                        message: 'Already have an account?',
-                        actionText: 'Log In',
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => LoginScreen()),
+                            const SizedBox(height: 12),
+                            // const AuthTermsText(),
+                            // const SizedBox(height: 24),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      // const AuthTermsText(),
-                      // const SizedBox(height: 24),
-                    ],
+                    ),
                   ),
                 ),
               );
@@ -308,5 +288,3 @@ class _SignupState extends State<Signup> {
     );
   }
 }
-
-

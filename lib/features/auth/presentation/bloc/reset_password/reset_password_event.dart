@@ -19,9 +19,5 @@ class ResetPasswordSubmitted extends ResetPasswordEvent {
   });
 
   @override
-  List<Object?> get props => [
-        contactNumber,
-        otpCode,
-        newPassword,
-      ];
+  List<Object?> get props => [contactNumber, otpCode, newPassword];
 }

@@ -12,10 +12,6 @@ class VerifyOtpUseCase {
     required OtpPurpose purpose,
     required String code,
   }) {
-    return repository.verifyOtp(
-      contactNumber: contactNumber,
-      
-      code: code,
-    );
+    return repository.verifyOtp(contactNumber: contactNumber, code: code);
   }
 }

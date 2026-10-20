@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:star_drive/core/constant/app_colors.dart';
+
 import 'package:star_drive/features/auth/presentation/screens/driver_signup_screen.dart';
 import 'package:star_drive/features/auth/presentation/screens/passanger_signup_screen.dart';
-// import PassengerSignUpScreen / DriverSignUpScreen
 
 class RoleSelectionScreen extends StatelessWidget {
   const RoleSelectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) => SingleChildScrollView(
@@ -23,32 +24,31 @@ class RoleSelectionScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () => Navigator.maybePop(context),
-                      ),
                       const SizedBox(height: 24),
                       Center(
                         child: Text(
                           'Are you a passenger or a driver?',
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.headlineMedium
-                              ?.copyWith(fontWeight: FontWeight.w700),
+                          style: textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
                       Center(
                         child: Text(
                           'You can change the mode later',
-                          style: theme.textTheme.bodyLarge
-                              ?.copyWith(color: theme.hintColor),
+                          style: textTheme.bodyLarge?.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ),
                       const Spacer(),
                       _RoleButton(
                         label: 'Passenger',
-                        background: scheme.primary,
-                        foreground: scheme.onPrimary,
+                        background: AppColors.primary,
+                        foreground: AppColors.white,
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -59,8 +59,8 @@ class RoleSelectionScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                       _RoleButton(
                         label: 'Driver',
-                        background: scheme.surfaceContainerHighest,
-                        foreground: scheme.onSurface,
+                        background: AppColors.primaryLight,
+                        foreground: AppColors.textPrimary,
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(

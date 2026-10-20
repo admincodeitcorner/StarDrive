@@ -1,5 +1,3 @@
-
-
 import 'package:star_drive/features/auth/domain/enums/otp_purpose.dart';
 
 class SendOtpRequestModel {
@@ -16,8 +14,7 @@ class SendOtpRequestModel {
   Map<String, dynamic> toJson() {
     return {
       'contactNumber': contactNumber,
-      if (cnic != null && cnic!.trim().isNotEmpty)
-        'cnic': cnic,
+      if (cnic != null && cnic!.trim().isNotEmpty) 'cnic': cnic,
       'purpose': switch (purpose) {
         OtpPurpose.register => 'Registration',
         OtpPurpose.forgotPassword => 'ForgotPassword',

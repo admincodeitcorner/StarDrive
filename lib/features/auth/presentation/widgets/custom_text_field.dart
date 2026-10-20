@@ -14,7 +14,7 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.textInputAction = TextInputAction.next,
     this.textInputFormatter,
-    required this.labelText, 
+    required this.labelText,
     required this.icon,
   });
 
@@ -22,7 +22,7 @@ class CustomTextField extends StatelessWidget {
 
   final String hintText;
   final String labelText;
-  final TextInputType?  keyboardType;
+  final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final bool obscureText;
   final bool passwordIconVisibility;
@@ -34,14 +34,9 @@ class CustomTextField extends StatelessWidget {
     borderSide: BorderSide(color: color),
   );
 
-
- static final List<TextInputFormatter> defaultInputFormatter = [
-    FilteringTextInputFormatter.allow(
-      RegExp(r"[a-zA-Z\u0600-\u06FF\s'-]"),
-    ),
+  static final List<TextInputFormatter> defaultInputFormatter = [
+    FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\u0600-\u06FF\s'-]")),
   ];
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +49,7 @@ class CustomTextField extends StatelessWidget {
           TextFormField(
             controller: controller,
             keyboardType: keyboardType,
-            textInputAction:textInputAction,
+            textInputAction: textInputAction,
             obscureText: obscureText,
             style: const TextStyle(fontSize: 16, color: AppColors.textPrimary),
 
@@ -66,7 +61,7 @@ class CustomTextField extends StatelessWidget {
                   }
                   return null;
                 },
-                inputFormatters: textInputFormatter,
+            inputFormatters: textInputFormatter,
             decoration: InputDecoration(
               // labelText: labelText,
               hintText: hintText,
@@ -74,7 +69,7 @@ class CustomTextField extends StatelessWidget {
               filled: true,
               fillColor: AppColors.surface,
               contentPadding: const EdgeInsets.symmetric(vertical: 18),
-              prefixIcon:  Icon(
+              prefixIcon: Icon(
                 icon,
                 // Icons.lock_outline_rounded,
                 color: AppColors.textHint,

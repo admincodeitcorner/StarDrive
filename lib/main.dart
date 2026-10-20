@@ -26,15 +26,9 @@ class StarDriveApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<AuthBloc>(
-          create: (_) => sl<AuthBloc>(),
-        ),
-        BlocProvider<ResetPasswordBloc>(
-          create: (_) => sl<ResetPasswordBloc>(),
-        ),
-        BlocProvider<LoginBloc>(
-          create: (_) => sl<LoginBloc>(),
-        ),
+        BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
+        BlocProvider<ResetPasswordBloc>(create: (_) => sl<ResetPasswordBloc>()),
+        BlocProvider<LoginBloc>(create: (_) => sl<LoginBloc>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
