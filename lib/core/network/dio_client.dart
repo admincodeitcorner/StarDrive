@@ -4,11 +4,15 @@ import 'package:flutter/foundation.dart';
 
 import 'package:star_drive/core/constant/apis_endpoints.dart';
 import 'package:star_drive/core/network/api_error_handler.dart';
+import 'package:star_drive/core/network/auth_inceptor.dart';
+import 'package:star_drive/core/storage/token_storage.dart';
 
 class DioClient {
   late final Dio dio;
 
-  DioClient() {
+  DioClient(
+{        required TokenStorage tokenStorage,}
+  ) {
     dio = Dio(
       BaseOptions(
         baseUrl: ApiEndpoints.baseUrl,
@@ -22,6 +26,13 @@ class DioClient {
         },
       ),
     );
+        dio.interceptors.add(
+      AuthInterceptor(
+        tokenStorage: tokenStorage,
+        baseUrl: ApiEndpoints.baseUrl,
+      ),
+    );
+
     setupApiLogging();
   }
   void setupApiLogging() {
@@ -53,10 +64,11 @@ class DioClient {
 
   Future<Either<Exception, Response>> postApiResponse(
     String url,
-    dynamic body,
-  ) async {
+    dynamic body, {
+    Options? options,
+  }) async {
     try {
-      final response = await dio.post(url, data: body);
+      final response = await dio.post(url, data: body, options: options);
       return Right(response);
     } on DioException catch (e) {
       return Left(ApiErrorHandler.handle(e)); // API/network failure

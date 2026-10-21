@@ -5,6 +5,7 @@ import 'package:star_drive/core/constant/apis_endpoints.dart';
 import 'package:star_drive/core/error/exception.dart';
 import 'package:star_drive/core/network/api_error_handler.dart';
 import 'package:star_drive/core/network/api_response.dart';
+import 'package:star_drive/core/storage/token_storage.dart';
 import 'package:star_drive/features/auth/data/model/login_request_model.dart';
 import 'package:star_drive/features/auth/data/model/otp_request_model.dart';
 import 'package:star_drive/features/auth/data/model/otp_response_model.dart';
@@ -34,8 +35,10 @@ abstract class AuthRemoteDataSource {
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final Dio dio;
   final DioClient apiClient;
+    final TokenStorage tokenStorage;
 
-  AuthRemoteDataSourceImpl(this.dio, this.apiClient);
+
+  AuthRemoteDataSourceImpl(this.dio, this.apiClient,this.tokenStorage);
   @override
   Future<Either<Exception, ApiResponse<SendOtpResponseModel>>> sendOtp(
     SendOtpRequestModel request,
@@ -71,7 +74,7 @@ Future<Either<Exception, ApiResponse<AuthResponseModel>>> register(
       // API/network error
       return Left(exception);
     },
-    (response) {
+    (response)async{
       final body = response.data;
 
       if (body is! Map<String, dynamic>) {
@@ -89,7 +92,13 @@ Future<Either<Exception, ApiResponse<AuthResponseModel>>> register(
             data as Map<String, dynamic>,
           ),
         );
+       if (apiResponse.code == '0000') {
+      final token = apiResponse.data?.token;
 
+       if (token != null && token.isNotEmpty) {
+        await tokenStorage.saveToken(token);
+      }
+    }
         return Right(apiResponse);
       } on Exception catch (exception) {
         return Left(exception);
