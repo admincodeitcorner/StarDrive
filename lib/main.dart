@@ -5,15 +5,9 @@ import 'package:star_drive/core/di/injector.dart';
 import 'package:star_drive/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:star_drive/features/auth/presentation/bloc/register/register_bloc.dart';
 import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_password_bloc.dart';
-import 'package:star_drive/features/auth/presentation/screens/login_screen.dart';
-import 'package:star_drive/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:star_drive/features/auth/presentation/screens/role_selection_screen.dart';
-import 'package:star_drive/features/auth/presentation/screens/signup.dart';
 import 'package:star_drive/features/driver_verification/presentataion/bloc/driver_verification_bloc/driver_verification_bloc.dart';
 import 'package:star_drive/features/driver_verification/presentataion/bloc/vechile_details_bloc/vechile_details_bloc_bloc.dart';
-import 'package:star_drive/features/driver_verification/presentataion/screen/driver_verification_screen.dart';
-import 'package:star_drive/features/driver_verification/presentataion/screen/vechile_detail_screen.dart';
-import 'package:star_drive/features/map/presentation/screen/map_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

@@ -8,7 +8,6 @@ import 'package:star_drive/features/auth/presentation/bloc/login/login_state.dar
 
 import 'package:star_drive/features/auth/presentation/screens/forgot_screen.dart';
 import 'package:star_drive/features/auth/presentation/screens/passanger_signup_screen.dart';
-import 'package:star_drive/features/auth/presentation/screens/signup.dart';
 import 'package:star_drive/features/auth/presentation/widgets/auth_header.dart';
 import 'package:star_drive/features/auth/presentation/widgets/auth_redirect_text.dart';
 import 'package:star_drive/features/auth/presentation/widgets/auth_screen_header.dart';
@@ -18,12 +17,10 @@ import 'package:star_drive/features/auth/presentation/widgets/custom_divider.dar
 import 'package:star_drive/features/auth/presentation/widgets/custom_phone_field.dart';
 import 'package:star_drive/features/dashboard/presentation/screens/home.screen.dart';
 
-
 import '../widgets/password_text_field.dart';
 import '../widgets/social_button.dart';
 
 class LoginScreen extends StatefulWidget {
-  
   const LoginScreen({super.key});
 
   @override
@@ -48,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _onLoginState(BuildContext context, LoginState state)async {
+  void _onLoginState(BuildContext context, LoginState state) async {
     final messenger = ScaffoldMessenger.of(context);
 
     if (state is LoginSuccess) {
@@ -56,7 +53,9 @@ class _LoginScreenState extends State<LoginScreen> {
         SnackBar(content: Text('Welcome ${state.user.name}!')),
       );
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => HomeScreen(userName: state.user.name)),
+        MaterialPageRoute(
+          builder: (_) => HomeScreen(userName: state.user.name),
+        ),
         (route) => false,
       );
     }
@@ -87,12 +86,14 @@ class _LoginScreenState extends State<LoginScreen> {
             listener: _onLoginState,
             builder: (context, state) {
               final isLoading = state is LoginLoading;
-        
+
               return LayoutBuilder(
                 builder: (context, constraints) => SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: IntrinsicHeight(
                       child: Form(
                         key: _formKey,
@@ -114,16 +115,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               initialCountryCode: 'PK',
                               onPhoneNumberChanged: (phoneNumber) {
                                 _completePhoneNumber = phoneNumber;
-        
+
                                 debugPrint(
                                   'SAVED COMPLETE NUMBER: $_completePhoneNumber',
                                 );
                               },
                             ),
                             const SizedBox(height: 20),
-        
+
                             PasswordTextField(controller: _passwordController),
-        
+
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
@@ -139,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                             const SizedBox(height: 16),
-        
+
                             AuthButton(
                               text: 'Log In',
                               trailingIcon: Icons.arrow_forward_rounded,
@@ -147,10 +148,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: _login,
                             ),
                             const SizedBox(height: 20),
-        
+
                             const CustomDivider(),
                             const SizedBox(height: 20),
-        
+
                             Row(
                               children: [
                                 Expanded(
@@ -177,17 +178,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                             ),
-        
+
                             const Spacer(),
                             const SizedBox(height: 24),
-        
+
                             AuthRedirectText(
                               message: "Don't have an account?",
                               actionText: 'Register',
                               onTap: () => _push(PassengerSignUpScreen()),
                             ),
                             const SizedBox(height: 16),
-        
+
                             const SizedBox(height: 20),
                           ],
                         ),

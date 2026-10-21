@@ -27,7 +27,7 @@ import 'package:star_drive/features/driver_verification/domain/usecase/vechile_d
 import 'package:star_drive/features/driver_verification/presentataion/bloc/driver_verification_bloc/driver_verification_bloc.dart';
 import 'package:star_drive/features/driver_verification/presentataion/bloc/vechile_details_bloc/vechile_details_bloc_bloc.dart';
 
-import '../network/dio_client.dart';
+import '../storage/token_storage.dart';
 
 final sl = GetIt.instance;
 
@@ -46,9 +46,12 @@ void setupDependencies() {
   // Map BLoC
   sl.registerFactory<MapBloc>(() => MapBloc(sl<MapUseCase>()));
   // Shared HTTP client
-  sl.registerLazySingleton<DioClient>(() => DioClient());
+  sl.registerLazySingleton<Dio>(() => sl<DioClient>().dio);
 
   // Shared HTTP client
+  sl.registerLazySingleton<FlutterSecureStorage>(
+    () => const FlutterSecureStorage(),
+  );
   sl.registerLazySingleton<FlutterSecureStorage>(
     () => const FlutterSecureStorage(),
   );
@@ -59,16 +62,6 @@ void setupDependencies() {
 
   sl.registerLazySingleton<DioClient>(
     () => DioClient(tokenStorage: sl<TokenStorage>()),
-  );
-  sl.registerLazySingleton<Dio>(() => sl<DioClient>().dio);
-
-  // Data source
-  sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(
-      sl<Dio>(),
-      sl<DioClient>(),
-      sl<TokenStorage>(),
-    ),
   );
 
   // Repository implementation

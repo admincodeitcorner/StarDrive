@@ -12,11 +12,9 @@ import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_
 import 'package:star_drive/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_auth_button.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_text_field.dart';
-import 'package:star_drive/features/dashboard/presentation/screens/home.screen.dart';
 import 'package:star_drive/features/driver_verification/presentataion/screen/driver_verification_screen.dart';
 
-import '../../../map/presentation/screen/map_screen.dart';
-
+// ignore: must_be_immutable
 class OtpScreen extends StatefulWidget {
   RegistrationData? registrationData;
   final OtpPurpose otpPurpose;
