@@ -6,7 +6,6 @@ class RegistrationData {
   final String fcmToken;
   final String androidId;
 
-
   final String? fatherName;
   final String? cnic;
   final String? address;

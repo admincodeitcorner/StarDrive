@@ -1,16 +1,19 @@
-import 'package:star_drive/features/auth/domain/enums/otp_purpose.dart';
+import 'package:dartz/dartz.dart';
+import 'package:star_drive/core/error/failure.dart';
 
+import 'package:star_drive/features/auth/domain/enums/otp_purpose.dart';
 import '../entities/otp_details.dart';
+
 import '../repository/auth_repoitory.dart';
 
-class SendOtp {
+class SendOtpUsecase {
   final AuthRepository repository;
 
-  const SendOtp(this.repository);
+  const SendOtpUsecase(this.repository);
 
-  Future<OtpDetails> call({
+  Future<Either<Failure, OtpDetails>> call({
     required String contactNumber,
-    String?  cnic,
+    String? cnic,
     required OtpPurpose purpose,
   }) {
     return repository.sendOtp(

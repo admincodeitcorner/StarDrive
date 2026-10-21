@@ -1,3 +1,6 @@
+import 'package:dartz/dartz.dart';
+import 'package:star_drive/core/error/failure.dart';
+
 import '../entities/auth_user.dart';
 import '../repository/auth_repoitory.dart';
 
@@ -6,7 +9,7 @@ class RegisterUser {
 
   const RegisterUser(this.repository);
 
-  Future<AuthUser> call({
+  Future<Either<Failure, AuthUser>> call({
     required String name,
     required String contactNumber,
     required String role,

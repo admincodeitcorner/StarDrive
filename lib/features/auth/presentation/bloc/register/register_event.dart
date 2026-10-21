@@ -53,18 +53,18 @@ final class RegisterRequested extends AuthEvent {
 
   @override
   List<Object?> get props => [
-        name,
-        contactNumber,
-        role,
-        password,
-        otpCode,
-        fcmToken,
-        androidId,
-        fatherName,
-        cnic,
-        address,
-        dob,
-      ];
+    name,
+    contactNumber,
+    role,
+    password,
+    otpCode,
+    fcmToken,
+    androidId,
+    fatherName,
+    cnic,
+    address,
+    dob,
+  ];
 }
 
 final class VerifyOtpRequested extends AuthEvent {

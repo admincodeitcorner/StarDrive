@@ -9,7 +9,6 @@ import 'package:star_drive/features/auth/presentation/widgets/custom_auth_button
 import 'package:star_drive/features/auth/presentation/widgets/password_text_field.dart';
 import 'package:star_drive/features/dashboard/presentation/screens/home.screen.dart';
 
-
 class ResetPasswordScreen extends StatefulWidget {
   final String contactNumber;
   final String otpCode;

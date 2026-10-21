@@ -68,11 +68,9 @@ class _ForgotScreenState extends State<ForgotScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (_) => OtpScreen(
-                
-                     otpPurpose: OtpPurpose.forgotPassword,
-                     contactNumber:   _completePhoneNumber ,
-                     devCode: state.devCode,
- 
+                    otpPurpose: OtpPurpose.forgotPassword,
+                    contactNumber: _completePhoneNumber,
+                    devCode: state.devCode,
                   ),
                 ),
               );
@@ -110,7 +108,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
                   hintText: '300 1234567',
                   initialCountryCode: 'PK',
                   onPhoneNumberChanged: (phoneNumber) {
-                  _completePhoneNumber = phoneNumber;
+                    _completePhoneNumber = phoneNumber;
 
                     debugPrint('SAVED COMPLETE NUMBER: $_completePhoneNumber');
                   },

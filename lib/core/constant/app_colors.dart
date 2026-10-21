@@ -24,4 +24,9 @@ class AppColors {
   // Other
   static const Color white = Colors.white;
   static const Color shadow = Color(0x33FF7A00);
+    static const Color fieldFill = Color(0xFFF5F5F5);
+  static const Color link = Color(0xFF3B82F6);
+
+  // error
+  static const Color error = Colors.red;
 }

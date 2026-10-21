@@ -5,13 +5,11 @@ import 'package:star_drive/features/auth/domain/usecase/reset_password_usecase.d
 import 'reset_password_event.dart';
 import 'reset_password_state.dart';
 
-class ResetPasswordBloc
-    extends Bloc<ResetPasswordEvent, ResetPasswordState> {
+class ResetPasswordBloc extends Bloc<ResetPasswordEvent, ResetPasswordState> {
   final ResetPasswordUseCase resetPasswordUseCase;
 
-  ResetPasswordBloc({
-    required this.resetPasswordUseCase,
-  }) : super(const ResetPasswordInitial()) {
+  ResetPasswordBloc({required this.resetPasswordUseCase})
+    : super(const ResetPasswordInitial()) {
     on<ResetPasswordSubmitted>(_onResetPasswordSubmitted);
   }
 
@@ -32,11 +30,7 @@ class ResetPasswordBloc
 
       emit(ResetPasswordSuccess(result.message));
     } catch (e) {
-      emit(
-        ResetPasswordFailure(
-          e.toString().replaceFirst('Exception: ', ''),
-        ),
-      );
+      emit(ResetPasswordFailure(e.toString().replaceFirst('Exception: ', '')));
     }
   }
 }

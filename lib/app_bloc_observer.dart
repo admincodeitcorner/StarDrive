@@ -6,16 +6,11 @@ class AppBlocObserver extends BlocObserver {
   void onEvent(Bloc bloc, Object? event) {
     super.onEvent(bloc, event);
 
-    debugPrint(
-      '🟦 [BLoC EVENT] ${bloc.runtimeType} → ${event.runtimeType}',
-    );
+    debugPrint('🟦 [BLoC EVENT] ${bloc.runtimeType} → ${event.runtimeType}');
   }
 
   @override
-  void onTransition(
-    Bloc bloc,
-    Transition transition,
-  ) {
+  void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
 
     debugPrint(
@@ -38,11 +33,7 @@ class AppBlocObserver extends BlocObserver {
   }
 
   @override
-  void onError(
-    BlocBase bloc,
-    Object error,
-    StackTrace stackTrace,
-  ) {
+  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
     debugPrint(' [BLoC ERROR] ${bloc.runtimeType}');
     debugPrint('Error: $error');
     debugPrintStack(stackTrace: stackTrace);

@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: DrawerScreen(userName: widget.userName),
       appBar: AppBar(title: Text('Welcome to StarRide')),
-     body: const MapScreen(),
+      body: const MapScreen(),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () async {
       //     try {

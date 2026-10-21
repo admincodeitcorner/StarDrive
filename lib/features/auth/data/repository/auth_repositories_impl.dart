@@ -1,3 +1,7 @@
+import 'package:dartz/dartz.dart';
+import 'package:star_drive/core/error/failure.dart';
+import 'package:star_drive/core/network/api_error_handler.dart';
+import 'package:star_drive/core/network/error_mapper.dart';
 import 'package:star_drive/features/auth/data/dataresource/auth_remote_datasource.dart';
 import 'package:star_drive/features/auth/data/model/login_request_model.dart';
 import 'package:star_drive/features/auth/data/model/otp_request_model.dart';
@@ -15,55 +19,59 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
 
   AuthRepositoryImpl(this.remoteDataSource);
-@override
-Future<OtpDetails> sendOtp({
-  required String contactNumber,
-   String? cnic,
-  required OtpPurpose purpose
-}) async {
-  final result = await remoteDataSource.sendOtp(
-    SendOtpRequestModel(
-      contactNumber: contactNumber,
-      cnic: cnic,
-      purpose: purpose
-    
-    ),
-  );
- final otpDetails = result.data;
-
-if (otpDetails == null) {
-  throw Exception('OTP response data is missing.');
-}
-  return otpDetails;
-}
-
-@override
-Future<void> verifyOtp({
-  required String contactNumber,
-  
-  required String code,
-}) async {
-  final request = VerifyRequestModel(
-    contactNumber: contactNumber,
-    otpCode: code,
-
-  );
-
-  await remoteDataSource.verifyOtp(request);
-}
   @override
-  Future<AuthUser> registerWithDetails({
-required String name,
-  required String contactNumber,
-  required String role,
-  required String password,
-  required String otpCode,
-  required String fcmToken,
-  required String androidId,
-  String? fatherName,
-  String? cnic,
-  String? address,
-  String? dob,
+  Future<Either<Failure, OtpDetails>> sendOtp({
+    required String contactNumber,
+    String? cnic,
+    required OtpPurpose purpose,
+  }) async {
+    final result = await remoteDataSource.sendOtp(
+      SendOtpRequestModel(
+        contactNumber: contactNumber,
+        cnic: cnic,
+        purpose: purpose,
+      ),
+    );
+    return result.fold((exception) => Left(ErrorMapper.map(exception)), (
+      apiResponse,
+    ) {
+      final otpModel = apiResponse.data;
+
+      if (otpModel == null) {
+        return Left(UnexpectedFailure('OTP response data is missing.'));
+      }
+
+      return Right(otpModel);
+    });
+  }
+
+  @override
+  Future<void> verifyOtp({
+    required String contactNumber,
+
+    required String code,
+  }) async {
+    final request = VerifyRequestModel(
+      contactNumber: contactNumber,
+      otpCode: code,
+    );
+
+    await remoteDataSource.verifyOtp(request);
+  }
+
+  @override
+  Future<Either<Failure, AuthUser>> registerWithDetails({
+    required String name,
+    required String contactNumber,
+    required String role,
+    required String password,
+    required String otpCode,
+    required String fcmToken,
+    required String androidId,
+    String? fatherName,
+    String? cnic,
+    String? address,
+    String? dob,
   }) async {
     final request = RegisterRequestModel(
       name: name,
@@ -75,29 +83,43 @@ required String name,
       dob: dob,
       password: password,
       fcmToken: fcmToken,
-      androidId: androidId, 
-      otpCode: otpCode
+      androidId: androidId,
+      otpCode: otpCode,
     );
 
-    return remoteDataSource.register(request);
-  }
-  @override
-Future<AuthUser> loginWithCredentials({
-  required String contactNumber,
-  required String password,
-  required String fcmToken,
-  required String androidId,
-}) async {
-  final request = LoginRequestModel(
-    contactNumber: contactNumber,
-    password: password,
-    fcmToken: fcmToken,
-    androidId: androidId,
-  );
+    final result = await remoteDataSource.register(request);
+    return result.fold(
+      (exception) => Left(ErrorMapper.map(exception)),
+      (apiResponse) {
+        final authModel = apiResponse.data;
 
-  return await remoteDataSource.login(request);
-}
- @override
+        if (authModel == null) {
+          return Left(UnexpectedFailure('Registration response data is missing.'));
+        }
+
+        return Right(authModel);
+      },
+    );
+  }
+
+  @override
+  Future<AuthUser> loginWithCredentials({
+    required String contactNumber,
+    required String password,
+    required String fcmToken,
+    required String androidId,
+  }) async {
+    final request = LoginRequestModel(
+      contactNumber: contactNumber,
+      password: password,
+      fcmToken: fcmToken,
+      androidId: androidId,
+    );
+
+    return await remoteDataSource.login(request);
+  }
+
+  @override
   Future<ResetPasswordResponseModel> resetPassword(
     ResetPasswordRequestModel request,
   ) {

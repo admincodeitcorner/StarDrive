@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:star_drive/core/constant/app_colors.dart';
 
-
 class AuthBackground extends StatelessWidget {
   final Widget child;
   const AuthBackground({super.key, required this.child});

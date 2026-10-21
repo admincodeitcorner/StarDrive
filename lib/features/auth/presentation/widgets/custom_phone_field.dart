@@ -10,7 +10,7 @@ class CustomPhoneField extends StatelessWidget {
   final String initialCountryCode;
   final int maxDigits;
 
-    final ValueChanged<String>? onPhoneNumberChanged;
+  final ValueChanged<String>? onPhoneNumberChanged;
 
   const CustomPhoneField({
     super.key,
@@ -23,9 +23,9 @@ class CustomPhoneField extends StatelessWidget {
   });
 
   OutlineInputBorder _border(Color color) => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(18),
-        borderSide: BorderSide(color: color),
-      );
+    borderRadius: BorderRadius.circular(18),
+    borderSide: BorderSide(color: color),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +38,7 @@ class CustomPhoneField extends StatelessWidget {
             valueListenable: controller,
             builder: (_, value, __) => Text(
               '${value.text.length}/$maxDigits',
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppColors.textHint,
-              ),
+              style: const TextStyle(fontSize: 13, color: AppColors.textHint),
             ),
           ),
         ),
@@ -59,10 +56,7 @@ class CustomPhoneField extends StatelessWidget {
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
           ),
-          style: const TextStyle(
-            fontSize: 16,
-            color: AppColors.textPrimary,
-          ),
+          style: const TextStyle(fontSize: 16, color: AppColors.textPrimary),
           flagsButtonPadding: const EdgeInsets.only(left: 12),
           decoration: InputDecoration(
             hintText: hintText,

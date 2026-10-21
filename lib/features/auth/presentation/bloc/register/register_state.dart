@@ -33,17 +33,19 @@ final class OtpSent extends AuthState {
 
   @override
   List<Object?> get props => [
-        contactNumber,
-        cnic,
-        devCode,
-        expiresInSeconds,
-        resendAfterSeconds,
-      ];
+    contactNumber,
+    cnic,
+    devCode,
+    expiresInSeconds,
+    resendAfterSeconds,
+  ];
 }
+
 class OtpVerified extends AuthState {
   @override
   List<Object?> get props => [];
 }
+
 final class AuthSuccess extends AuthState {
   final AuthUser user;
 
