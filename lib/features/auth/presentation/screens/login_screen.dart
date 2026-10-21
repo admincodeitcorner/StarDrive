@@ -21,6 +21,7 @@ import '../widgets/password_text_field.dart';
 import '../widgets/social_button.dart';
 
 class LoginScreen extends StatefulWidget {
+  
   const LoginScreen({super.key});
 
   @override
@@ -45,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _onLoginState(BuildContext context, LoginState state) {
+  void _onLoginState(BuildContext context, LoginState state)async {
     final messenger = ScaffoldMessenger.of(context);
 
     if (state is LoginSuccess) {
@@ -53,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
         SnackBar(content: Text('Welcome ${state.user.name}!')),
       );
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => HomeScreen()),
+        MaterialPageRoute(builder: (_) => HomeScreen(userName: state.user.name)),
         (route) => false,
       );
     }

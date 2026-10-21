@@ -146,7 +146,7 @@ class _OtpScreenState extends State<OtpScreen> {
               });
 
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => HomeScreen()),
+                MaterialPageRoute(builder: (_) => HomeScreen(userName:state.user.name,)),
                 (route) => false,
               );
             }

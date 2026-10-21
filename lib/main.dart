@@ -9,6 +9,8 @@ import 'package:star_drive/features/auth/presentation/screens/login_screen.dart'
 import 'package:star_drive/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:star_drive/features/auth/presentation/screens/role_selection_screen.dart';
 import 'package:star_drive/features/auth/presentation/screens/signup.dart';
+import 'package:star_drive/features/dashboard/presentation/screens/home.screen.dart';
+import 'package:star_drive/features/dashboard/presentation/screens/widgets/drawer.dart';
 import 'package:star_drive/features/map/presentation/screen/map_screen.dart';
 
 void main() {
@@ -26,20 +28,14 @@ class StarDriveApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<AuthBloc>(
-          create: (_) => sl<AuthBloc>(),
-        ),
-        BlocProvider<ResetPasswordBloc>(
-          create: (_) => sl<ResetPasswordBloc>(),
-        ),
-        BlocProvider<LoginBloc>(
-          create: (_) => sl<LoginBloc>(),
-        ),
+        BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
+        BlocProvider<ResetPasswordBloc>(create: (_) => sl<ResetPasswordBloc>()),
+        BlocProvider<LoginBloc>(create: (_) => sl<LoginBloc>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(),
-        home: RoleSelectionScreen(),
+        home: HomeScreen(userName: 'javeria test'),
       ),
     );
   }
