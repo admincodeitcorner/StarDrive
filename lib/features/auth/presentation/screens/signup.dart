@@ -25,6 +25,7 @@ import 'package:star_drive/features/auth/presentation/widgets/password_text_fiel
 import 'package:star_drive/features/auth/presentation/widgets/sign_up_top_bar.dart';
 import 'package:star_drive/features/auth/presentation/widgets/social_button.dart';
 import 'package:star_drive/core/constant/app_colors.dart';
+import 'package:star_drive/features/widgets/custom_date_picker.dart';
 
 import '../bloc/register/register_event.dart';
 import '../bloc/register/register_state.dart';
@@ -68,21 +69,24 @@ class _SignupState extends State<Signup> {
     confirmPasswordController.dispose();
     super.dispose();
   }
+String _two(int n) => n.toString().padLeft(2, '0');
 
-  String _two(int n) => n.toString().padLeft(2, '0');
+String get _dobApi {
+  if (_dob == null) return '';
 
-  String get _dobApi => _dob == null
-      ? ''
-      : '${_dob!.year.toString().padLeft(4, '0')}-${_two(_dob!.month)}-${_two(_dob!.day)}';
+  return '${_dob!.year.toString().padLeft(4, '0')}/'
+      '${_two(_dob!.month)}/'
+      '${_two(_dob!.day)}';
+}
 
-  void _onDateSelected(DateTime selectedDate) {
-    _dob = selectedDate;
+  // void _onDateSelected(DateTime selectedDate) {
+  //   _dob = selectedDate;
 
-    dateOfBirthController.text =
-        '${selectedDate.day.toString().padLeft(2, '0')} / '
-        '${selectedDate.month.toString().padLeft(2, '0')} / '
-        '${selectedDate.year.toString().padLeft(4, '0')}';
-  }
+  //   dateOfBirthController.text =
+  //       '${selectedDate.day.toString().padLeft(2, '0')} / '
+  //       '${selectedDate.month.toString().padLeft(2, '0')} / '
+  //       '${selectedDate.year.toString().padLeft(4, '0')}';
+  // }
 
   void _register() {
     if (!_formKey.currentState!.validate()) return;

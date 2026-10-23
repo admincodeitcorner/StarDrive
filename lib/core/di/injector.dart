@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:star_drive/features/map/data/datasource/route_datasource.dart';
 import '../../features/auth/data/dataresource/auth_remote_datasource.dart';
 import 'package:star_drive/features/auth/data/repository/auth_repositories_impl.dart';
 import 'package:star_drive/features/auth/domain/repository/auth_repoitory.dart';
@@ -32,19 +33,6 @@ import '../storage/token_storage.dart';
 final sl = GetIt.instance;
 
 void setupDependencies() {
-  // Map data source
-  sl.registerLazySingleton<LocationDataSource>(() => LocationDataSource());
-
-  // Map repository
-  sl.registerLazySingleton<MapRepository>(
-    () => MapRepositoryImp(sl<LocationDataSource>()),
-  );
-
-  // Map use case
-  sl.registerLazySingleton<MapUseCase>(() => MapUseCase(sl<MapRepository>()));
-
-  // Map BLoC
-  sl.registerFactory<MapBloc>(() => MapBloc(sl<MapUseCase>()));
   // Shared HTTP client
   sl.registerLazySingleton<Dio>(() => sl<DioClient>().dio);
 
@@ -52,9 +40,9 @@ void setupDependencies() {
   sl.registerLazySingleton<FlutterSecureStorage>(
     () => const FlutterSecureStorage(),
   );
-  sl.registerLazySingleton<FlutterSecureStorage>(
-    () => const FlutterSecureStorage(),
-  );
+  // sl.registerLazySingleton<FlutterSecureStorage>(
+  //   () => const FlutterSecureStorage(),
+  // );
 
   sl.registerLazySingleton<TokenStorage>(
     () => TokenStorage(sl<FlutterSecureStorage>()),
@@ -63,8 +51,16 @@ void setupDependencies() {
   sl.registerLazySingleton<DioClient>(
     () => DioClient(tokenStorage: sl<TokenStorage>()),
   );
+// Auth Remote Data Source
+sl.registerLazySingleton<AuthRemoteDataSource>(
+  () => AuthRemoteDataSourceImpl(
+    sl<Dio>(),
+    sl<DioClient>(),
+    sl<TokenStorage>(),
+  ),
+);
 
-  // Repository implementation
+   // Repository implementation
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(sl<AuthRemoteDataSource>()),
   );
@@ -127,4 +123,22 @@ void setupDependencies() {
   sl.registerFactory<VehicleDetailsBloc>(
     () => VehicleDetailsBloc(sl<SubmitVehicleDetailsUseCase>()),
   );
+
+
+  //Map Injection 
+  sl.registerLazySingleton<LocationDataSource>(
+  () => LocationDataSourceImpl(),
+);
+
+sl.registerLazySingleton<LocationRepository>(
+  () => LocationRepositoryImpl(sl<LocationDataSource>()),
+);
+
+sl.registerFactory<MapBloc>(
+  () => MapBloc(sl<LocationRepository>()),
+);
+sl.registerLazySingleton<RouteDataSource>(
+  () => RouteDataSourceImpl(
+    sl<DioClient>(),
+  ));
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:star_drive/app_bloc_observer.dart';
 import 'package:star_drive/core/di/injector.dart';
 import 'package:star_drive/features/auth/presentation/bloc/login/login_bloc.dart';
@@ -34,10 +35,19 @@ class StarDriveApp extends StatelessWidget {
           create: (_) => sl<VehicleDetailsBloc>(),
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(),
-        home: RoleSelectionScreen(),
+      child: ScreenUtilPlusInit(
+        designSize: const Size(360, 690),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        autoRebuild: false,
+      builder: (context,child){
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(),
+          home: RoleSelectionScreen(),
+      
+        );
+      }
       ),
     );
   }

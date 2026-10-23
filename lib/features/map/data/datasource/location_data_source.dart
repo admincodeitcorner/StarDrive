@@ -1,12 +1,22 @@
 import 'package:geolocator/geolocator.dart';
 
-class LocationDataSource {
+abstract interface class LocationDataSource {
+  Future<Position> getCurrentLocation();
+  Future<LocationPermission> requestPermission();
+  Future<bool> isLocationServiceEnabled();
+  Future<LocationPermission> checkPermission();
+  Future<bool> openAppSettings();
+  Future<bool> openLocationSettings();
+}
+
+class LocationDataSourceImpl implements LocationDataSource {
+  @override
   Future<Position> getCurrentLocation() async {
     final serviceEnabled =
         await Geolocator.isLocationServiceEnabled();
 
     if (!serviceEnabled) {
-      throw Exception('Please turn on your phone GPS.');
+      throw const LocationServiceDisabledException();
     }
 
     var permission = await Geolocator.checkPermission();
@@ -16,20 +26,54 @@ class LocationDataSource {
     }
 
     if (permission == LocationPermission.denied) {
-      throw Exception('Location permission denied.');
+      throw const LocationPermissionDeniedException();
     }
 
     if (permission == LocationPermission.deniedForever) {
-      throw Exception(
-        'Please allow location permission from phone settings.',
-      );
+      throw const LocationPermissionPermanentlyDeniedException();
     }
 
-    return await Geolocator.getCurrentPosition(
+    return Geolocator.getCurrentPosition(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
-        timeLimit: Duration(seconds: 15),
+        timeLimit: Duration(seconds: 20),
       ),
     );
+
+  
   }
+
+  @override
+  Future<LocationPermission> requestPermission() {
+    return Geolocator.requestPermission();
+  }
+
+  @override
+  Future<bool> isLocationServiceEnabled() {
+    return Geolocator.isLocationServiceEnabled();
+  }
+
+  @override
+  Future<LocationPermission> checkPermission() {
+    return Geolocator.checkPermission();
+  }
+
+  @override
+  Future<bool> openAppSettings() {
+    return Geolocator.openAppSettings();
+  }
+
+  @override
+  Future<bool> openLocationSettings() {
+    return Geolocator.openLocationSettings();
+  }
+}
+
+class LocationPermissionDeniedException implements Exception {
+  const LocationPermissionDeniedException();
+}
+
+class LocationPermissionPermanentlyDeniedException
+    implements Exception {
+  const LocationPermissionPermanentlyDeniedException();
 }

@@ -1,17 +1,46 @@
-import 'package:geolocator/geolocator.dart';
+part of 'map_bloc.dart';
 
-class MapState {}
+sealed class MapState extends Equatable {
+  const MapState();
 
-class MapInitial extends MapState {}
-
-class MapLocationLoading extends MapState {}
-
-class MapLocationSuccess extends MapState {
-  final Position position;
-  MapLocationSuccess({required this.position});
+  @override
+  List<Object?> get props => [];
 }
 
-class MapLocationFailure extends MapState {
+final class MapInitial extends MapState {
+  const MapInitial();
+}
+
+final class MapLocationLoading extends MapState {
+  const MapLocationLoading();
+}
+
+final class MapPermissionRequired extends MapState {
+  const MapPermissionRequired();
+}
+
+final class MapPermissionPermanentlyDenied extends MapState {
+  const MapPermissionPermanentlyDenied();
+}
+
+final class MapLocationServiceDisabled extends MapState {
+  const MapLocationServiceDisabled();
+}
+
+final class MapLocationSuccess extends MapState {
+  final Position position;
+
+  const MapLocationSuccess(this.position);
+
+  @override
+  List<Object?> get props => [position.latitude, position.longitude];
+}
+
+final class MapLocationFailure extends MapState {
   final String message;
-  MapLocationFailure({required this.message});
+
+  const MapLocationFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }

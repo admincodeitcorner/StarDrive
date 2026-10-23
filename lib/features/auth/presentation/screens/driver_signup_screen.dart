@@ -21,6 +21,7 @@ import 'package:star_drive/features/auth/presentation/widgets/custom_text_field.
 import 'package:star_drive/features/auth/presentation/widgets/password_text_field.dart';
 import 'package:star_drive/features/auth/presentation/widgets/sign_up_top_bar.dart';
 import 'package:star_drive/features/auth/presentation/widgets/social_button.dart';
+import 'package:star_drive/features/widgets/custom_date_picker.dart';
 
 class DriverSignUpScreen extends StatefulWidget {
   const DriverSignUpScreen({super.key});

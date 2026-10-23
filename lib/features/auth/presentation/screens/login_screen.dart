@@ -151,33 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             const CustomDivider(),
                             const SizedBox(height: 20),
-
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: SocialButton(
-                                    text: 'Apple ID',
-                                    icon: const Icon(Icons.apple, size: 24),
-                                    onPressed: () {},
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: SocialButton(
-                                    text: 'Google',
-                                    icon: Image.asset(
-                                      'assets/icons/google.png',
-                                      height: 22,
-                                      errorBuilder: (_, __, ___) => const Icon(
-                                        Icons.g_mobiledata,
-                                        size: 28,
-                                      ),
-                                    ),
-                                    onPressed: () {},
-                                  ),
-                                ),
-                              ],
-                            ),
+                            SocialSignInRow(),
 
                             const Spacer(),
                             const SizedBox(height: 24),

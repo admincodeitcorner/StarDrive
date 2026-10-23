@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:star_drive/core/constant/app_colors.dart';
+import 'package:star_drive/features/auth/presentation/screens/role_selection_screen.dart';
 
 class SignupTOPBar extends StatelessWidget {
   // final String? stepText;
@@ -20,7 +21,7 @@ class SignupTOPBar extends StatelessWidget {
             shadowColor: Colors.black12,
             child: InkWell(
               customBorder: const CircleBorder(),
-              onTap: () => Navigator.pop(context),
+              onTap: () => Navigator.pop(context,RoleSelectionScreen()),
               child: const SizedBox(
                 width: 48,
                 height: 48,

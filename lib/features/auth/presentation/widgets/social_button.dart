@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:star_drive/core/constant/app_colors.dart';
+import 'package:star_drive/core/constant/app_images.dart';
 
 class SocialSignInRow extends StatelessWidget {
   const SocialSignInRow({super.key, this.onApple, this.onGoogle});
@@ -14,7 +15,7 @@ class SocialSignInRow extends StatelessWidget {
         Expanded(
           child: SocialButton(
             text: 'Apple ID',
-            icon: const Icon(Icons.apple, size: 22, color: AppColors.textPrimary),
+            image: Image.asset(AppImages.iphoneIcon),
             onPressed: onApple ?? () {}, // TODO: Apple sign in
           ),
         ),
@@ -22,14 +23,7 @@ class SocialSignInRow extends StatelessWidget {
         Expanded(
           child: SocialButton(
             text: 'Google',
-            icon: const Text(
-              'G',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF4285F4),
-              ),
-            ),
+            image: Image.asset(AppImages.google),
             onPressed: onGoogle ?? () {}, // TODO: Google sign in
           ),
         ),
@@ -39,13 +33,13 @@ class SocialSignInRow extends StatelessWidget {
 }
 class SocialButton extends StatelessWidget {
   final String text;
-  final Widget icon;
+  final Image image;
   final VoidCallback onPressed;
 
   const SocialButton({
     super.key,
     required this.text,
-    required this.icon,
+    required this.image,
     required this.onPressed,
   });
 
@@ -65,16 +59,30 @@ class SocialButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            icon,
-            const SizedBox(width: 10),
-            Text(
-              text,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
+             SizedBox(
+              width: 24,
+              height: 24,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: image,
               ),
             ),
+            
+            const SizedBox(width: 10),
+                       Flexible(
+              child: Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+
           ],
         ),
       ),
