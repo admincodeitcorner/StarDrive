@@ -52,9 +52,6 @@ void setupDependencies() {
   sl.registerLazySingleton<FlutterSecureStorage>(
     () => const FlutterSecureStorage(),
   );
-  sl.registerLazySingleton<FlutterSecureStorage>(
-    () => const FlutterSecureStorage(),
-  );
 
   sl.registerLazySingleton<TokenStorage>(
     () => TokenStorage(sl<FlutterSecureStorage>()),
@@ -68,6 +65,14 @@ void setupDependencies() {
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(sl<AuthRemoteDataSource>()),
   );
+
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+  () => AuthRemoteDataSourceImpl(
+    sl<Dio>(),
+    sl<DioClient>(),
+    sl<TokenStorage>(),
+  ),
+);
 
   // Use case
   sl.registerLazySingleton<RegisterUser>(
