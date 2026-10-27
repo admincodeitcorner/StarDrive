@@ -38,4 +38,6 @@ abstract interface class AuthRepository {
   Future<ResetPasswordResponseModel> resetPassword(
     ResetPasswordRequestModel request,
   );
+
+  Future<Either<Failure, Unit>> logout();
 }

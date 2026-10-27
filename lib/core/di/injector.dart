@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:star_drive/features/auth/domain/usecase/logout_usecase.dart';
+import 'package:star_drive/features/auth/presentation/bloc/logout/logout_bloc.dart';
 import 'package:star_drive/features/map/data/datasource/route_datasource.dart';
-import '../../features/auth/data/dataresource/auth_remote_datasource.dart';
+import '../../features/auth/data/dataresource/local/auth_local_data_storage.dart';
+import '../../features/auth/data/dataresource/remote/auth_remote_datasource.dart';
 import 'package:star_drive/features/auth/data/repository/auth_repositories_impl.dart';
 import 'package:star_drive/features/auth/domain/repository/auth_repoitory.dart';
 import 'package:star_drive/features/auth/domain/usecase/login_use_case.dart';
@@ -15,6 +18,11 @@ import 'package:star_drive/features/auth/presentation/bloc/register/register_blo
 import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_password_bloc.dart';
 import 'package:star_drive/features/map/data/repository/map_repository_imp.dart';
 import 'package:star_drive/features/map/map_import.dart';
+import '../../features/become_driver/data/data_source/become_driver_remote_dataSource.dart';
+import '../../features/become_driver/data/repositories/become_driver_repository_impl.dart';
+import '../../features/become_driver/domain/repositories/become_driver_repository.dart';
+import '../../features/become_driver/domain/usecase/become_driver_usecase.dart';
+import '../../features/become_driver/presentation/becomeDriverBloc/become_driver_bloc.dart';
 import '../network/dio_client.dart';
 import 'package:star_drive/features/map/data/datasource/location_data_source.dart';
 import 'package:star_drive/features/driver_verification/data/datasource/driver_documents_remote_datasource.dart';
@@ -59,11 +67,15 @@ sl.registerLazySingleton<AuthRemoteDataSource>(
     sl<TokenStorage>(),
   ),
 );
+sl.registerLazySingleton(() => AuthLocalStorage());
 
    // Repository implementation
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(sl<AuthRemoteDataSource>()),
-  );
+  () => AuthRepositoryImpl(
+    sl<AuthRemoteDataSource>(),
+    sl<TokenStorage>(),
+  ),
+);
 
   // Use case
   sl.registerLazySingleton<RegisterUser>(
@@ -81,12 +93,21 @@ sl.registerLazySingleton<AuthRemoteDataSource>(
     () => ResetPasswordUseCase(sl<AuthRepository>()),
   );
   sl.registerFactory<AuthBloc>(
-    () => AuthBloc(registerUser: sl(), sendOtp: sl(), verifyOtpUseCase: sl()),
+    () => AuthBloc(registerUser: sl(), sendOtp: sl(), verifyOtpUseCase: sl(), authLocalStorage: sl()),
   );
-  sl.registerFactory<LoginBloc>(() => LoginBloc(sl<LoginUseCase>()));
+  sl.registerFactory<LoginBloc>(() => LoginBloc(sl<LoginUseCase>(), sl<AuthLocalStorage>()));
   sl.registerFactory<ResetPasswordBloc>(
     () => ResetPasswordBloc(resetPasswordUseCase: sl<ResetPasswordUseCase>()),
   );
+//logout bloc
+sl.registerLazySingleton<LogoutUseCase>(
+  () => LogoutUseCase(sl<AuthRepository>()),
+);
+
+sl.registerFactory<LogoutBloc>(
+  () => LogoutBloc(sl<LogoutUseCase>()),
+);
+
 
   sl.registerLazySingleton<DriverDocumentsRemoteDataSource>(
     () => DriverDocumentsRemoteDataSourceImpl(sl<DioClient>()),
@@ -141,4 +162,29 @@ sl.registerLazySingleton<RouteDataSource>(
   () => RouteDataSourceImpl(
     sl<DioClient>(),
   ));
+  //Become Driver
+  sl.registerLazySingleton<BecomeDriverRemoteDataSource>(
+  () => BecomeDriverRemoteDataSourceImpl(
+    sl<DioClient>(),
+  ),
+);
+
+sl.registerLazySingleton<BecomeDriverRepository>(
+  () => BecomeDriverRepositoryImpl(
+    remoteDataSource: sl<BecomeDriverRemoteDataSource>(),
+    tokenStorage: sl<TokenStorage>(),
+  ),
+);
+
+sl.registerLazySingleton<BecomeDriverUseCase>(
+  () => BecomeDriverUseCase(
+    sl<BecomeDriverRepository>(),
+  ),
+);
+
+sl.registerFactory<BecomeDriverBloc>(
+  () => BecomeDriverBloc(
+    sl<BecomeDriverUseCase>(),
+  ),
+);
 }

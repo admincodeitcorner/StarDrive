@@ -24,8 +24,7 @@ class CustomDatePickerField extends StatefulWidget {
   final ValueChanged<DateTime> onDateSelected;
 
   @override
-  State<CustomDatePickerField> createState() =>
-      _CustomDatePickerFieldState();
+  State<CustomDatePickerField> createState() => _CustomDatePickerFieldState();
 }
 
 class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
@@ -73,11 +72,7 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
   Future<void> _pickCalendarDate() async {
     final now = DateTime.now();
 
-    final defaultDate = DateTime(
-      now.year - 18,
-      now.month,
-      now.day,
-    );
+    final defaultDate = DateTime(now.year - 18, now.month, now.day);
 
     final initialDate = _selected ?? defaultDate;
 
@@ -86,16 +81,16 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
       initialDate: initialDate.isBefore(_firstDate)
           ? _firstDate
           : initialDate.isAfter(_lastDate)
-              ? _lastDate
-              : initialDate,
+          ? _lastDate
+          : initialDate,
       firstDate: _firstDate,
       lastDate: _lastDate,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: AppColors.primary,
-                ),
+            colorScheme: Theme.of(
+              context,
+            ).colorScheme.copyWith(primary: AppColors.primary),
           ),
           child: child!,
         );
@@ -141,9 +136,7 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
               final date = DateTime(year, month, day);
 
               // Reject invalid dates such as 2008/02/31.
-              if (date.year != year ||
-                  date.month != month ||
-                  date.day != day) {
+              if (date.year != year || date.month != month || date.day != day) {
                 setDialogState(() {
                   errorText = 'Please enter a valid date';
                 });
@@ -162,8 +155,7 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
                 _lastDate.day,
               );
 
-              if (dateOnly.isBefore(first) ||
-                  dateOnly.isAfter(last)) {
+              if (dateOnly.isBefore(first) || dateOnly.isAfter(last)) {
                 setDialogState(() {
                   errorText =
                       'Date must be between ${_format(first)} and ${_format(last)}';
@@ -179,27 +171,22 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
               content: TextField(
                 controller: dateController,
                 autofocus: true,
-                textInputAction: .next,
                 keyboardType: TextInputType.datetime,
+                textInputAction: .next,
                 maxLength: 10,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'[0-9/]'),
-                  ),
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9/]')),
                 ],
                 decoration: InputDecoration(
                   labelText: 'Date of birth',
                   labelStyle: TextStyle(color: AppColors.primary),
-                  
+                     
                   hintText: 'YYYY/MM/DD',
                   errorText: errorText,
                   counterText: '',
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: AppColors.primary,
-                      width: 2,
-                    ),
+                    borderSide: BorderSide(color: AppColors.primary, width: 2),
                   ),
                 ),
                 onChanged: (_) {
@@ -213,17 +200,15 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () =>
-                      Navigator.of(dialogContext).pop(),
-                  child: const Text('Cancel',
-                  style: TextStyle(color: AppColors.primary),),
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: AppColors.primary),
+                  ),
                 ),
                 TextButton(
                   onPressed: validateAndSubmit,
-                  child: Text(
-                    'OK',
-                    style: TextStyle(color: AppColors.primary),
-                  ),
+                  child: Text('OK', style: TextStyle(color: AppColors.primary)),
                 ),
               ],
             );
@@ -232,12 +217,15 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
       },
     );
 
-
-
     if (pickedDate != null && mounted) {
       _selectDate(pickedDate);
     }
   }
+
+  OutlineInputBorder _border(Color color) => OutlineInputBorder(
+    borderRadius: BorderRadius.circular(18),
+    borderSide: BorderSide(color: color),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -250,21 +238,21 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
           TextFormField(
             controller: _controller,
             readOnly: true,
+            textInputAction: .next,
+            
             onTap: _enterDateManually,
-            style: const TextStyle(
-              fontSize: 16,
-              color: AppColors.textPrimary,
-            ),
+            style: const TextStyle(fontSize: 16, color: AppColors.textPrimary),
             validator: (value) =>
-                value == null || value.isEmpty
-                    ? widget.errorText
-                    : null,
+                value == null || value.isEmpty ? widget.errorText : null,
             decoration: InputDecoration(
               hintText: widget.hintText,
+               filled: true,
+               fillColor: AppColors.surface,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: 18,
               ),
+
               suffixIcon: IconButton(
                 onPressed: _pickCalendarDate,
                 icon: const Icon(
@@ -272,6 +260,11 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
                   color: AppColors.textHint,
                 ),
               ),
+              border: _border(AppColors.border),
+              enabledBorder: _border(AppColors.border),
+              focusedBorder: _border(AppColors.primary),
+              errorBorder: _border(AppColors.error),
+              focusedErrorBorder: _border(AppColors.error),
             ),
           ),
         ],
@@ -365,9 +358,7 @@ class _ManualDateDialogState extends State<_ManualDateDialog> {
         autofocus: true,
         keyboardType: TextInputType.datetime,
         maxLength: 10,
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp(r'[0-9/]')),
-        ],
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9/]'))],
         decoration: InputDecoration(
           labelText: 'Date of birth',
           hintText: 'YYYY/MM/DD',

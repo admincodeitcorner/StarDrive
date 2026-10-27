@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (_) => HomeScreen(userName: state.user.name),
+          builder: (_) => HomeScreen(),
         ),
         (route) => false,
       );

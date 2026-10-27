@@ -42,4 +42,49 @@ class AuthResponseModel extends AuthUser {
       driverStatus: json['driverStatus'] as String?,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'contactNumber': contactNumber,
+      'role': role,
+      'isActive': isActive,
+      'isApproved': isApproved,
+      'passengerRating': passengerRating,
+      'isDriver': isDriver,
+      'totalEarning': totalEarning,
+      'fcmToken': fcmToken,
+      'androidId': androidId,
+      'token': token,
+      'fatherName': fatherName,
+      'cnic': cnic,
+      'address': address,
+      'dob': dob,
+      'driverStatus': driverStatus,
+    };
+  }
+
+factory AuthResponseModel.fromEntity(AuthUser u) {
+    return AuthResponseModel(
+      id: u.id,
+      name: u.name,
+      contactNumber: u.contactNumber,
+      role: u.role,
+      isActive: u.isActive,
+      isApproved: u.isApproved,
+      passengerRating: u.passengerRating,
+      isDriver: u.isDriver,
+      totalEarning: u.totalEarning,
+      fcmToken: u.fcmToken,
+      androidId: u.androidId,
+      token: u.token,
+      fatherName: u.fatherName,
+      cnic: u.cnic,
+      address: u.address,
+      dob: u.dob,
+      driverStatus: u.driverStatus,
+    );
+  }
+
 }

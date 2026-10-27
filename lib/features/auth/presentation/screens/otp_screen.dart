@@ -12,6 +12,7 @@ import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_
 import 'package:star_drive/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_auth_button.dart';
 import 'package:star_drive/features/auth/presentation/widgets/custom_text_field.dart';
+import 'package:star_drive/features/dashboard/presentation/screens/home.screen.dart';
 import 'package:star_drive/features/driver_verification/presentataion/screen/driver_verification_screen.dart';
 
 // ignore: must_be_immutable
@@ -145,13 +146,21 @@ class _OtpScreenState extends State<OtpScreen> {
               setState(() {
                 _isSubmitting = false;
               });
-
+              final role = state.user.role;
+              if (role == 'Passenger') {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => HomeScreen()),
+                  (route) => false,
+                );
+              }
+else {
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => DriverVerificationScreen()),
                 (route) => false,
               );
             }
-
+            }
             if (state is AuthFailure) {
               setState(() {
                 _isSubmitting = false;

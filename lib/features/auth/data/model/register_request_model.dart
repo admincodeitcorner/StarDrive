@@ -26,7 +26,8 @@ class RegisterRequestModel {
     this.dob,
   });
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() {
+  return {
     'name': name,
     'contactNumber': contactNumber,
     'role': role,
@@ -34,9 +35,22 @@ class RegisterRequestModel {
     'otpCode': otpCode,
     'fcmToken': fcmToken,
     'androidId': androidId,
-    if (fatherName != null) 'fatherName': fatherName,
-    if (cnic != null) 'cnic': cnic,
-    if (address != null) 'address': address,
-    if (dob != null) 'dob': dob,
+
+    'fatherName': fatherName?.trim().isNotEmpty == true
+        ? fatherName!.trim()
+        : null,
+
+    'cnic': cnic?.trim().isNotEmpty == true
+        ? cnic!.trim()
+        : null,
+
+    'address': address?.trim().isNotEmpty == true
+        ? address!.trim()
+        : null,
+
+    'dob': dob?.trim().isNotEmpty == true
+        ? dob!.trim()
+        : null,
   };
+}
 }

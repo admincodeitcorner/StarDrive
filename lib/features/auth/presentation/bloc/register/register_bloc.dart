@@ -7,15 +7,19 @@ import 'package:star_drive/features/auth/domain/usecase/verified_otp_usecase.dar
 import 'package:star_drive/features/auth/presentation/bloc/register/register_event.dart';
 import 'package:star_drive/features/auth/presentation/bloc/register/register_state.dart';
 
+import '../../../data/dataresource/local/auth_local_data_storage.dart';
+
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser;
   final SendOtpUsecase sendOtp;
   final VerifyOtpUseCase verifyOtpUseCase;
+  final AuthLocalStorage authLocalStorage;   // NEW
 
   AuthBloc({
     required this.registerUser,
     required this.sendOtp,
     required this.verifyOtpUseCase,
+    required this.authLocalStorage
   }) : super(const AuthInitial()) {
     on<SendOtpRequested>(_onSendOtp);
     on<RegisterRequested>(_onRegister);
@@ -77,9 +81,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         fcmToken: event.fcmToken,
         androidId: event.androidId,
       );
-        result.fold((failure) => emit(AuthFailure(failure.message)) ,(user){
+             await result.fold(
+        (failure) async => emit(AuthFailure(failure.message)),
+        (user) async {
+          await authLocalStorage.saveUser(user);
           emit(AuthSuccess(user));
-        });
+        },
+      );
+
       // emit(AuthSuccess(user));
     } catch (e) {
       emit(AuthFailure(_readableMessage(e)));

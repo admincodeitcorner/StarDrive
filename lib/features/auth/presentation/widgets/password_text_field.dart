@@ -10,11 +10,13 @@ class PasswordTextField extends StatefulWidget {
     this.labelText = 'Password',
     this.hintText = 'Enter your password',
     this.validator,
+    this.textInputAction
   });
 
   final TextEditingController controller;
   final String labelText;
   final String hintText;
+  final TextInputAction? textInputAction ;
   final String? Function(String?)? validator;
 
   @override
@@ -37,6 +39,8 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
         AuthFieldLabel(text: widget.labelText),
         TextFormField(
           controller: widget.controller,
+          textInputAction: widget.textInputAction ,
+
           obscureText: _isHidden,
           style: const TextStyle(fontSize: 16, color: AppColors.textPrimary),
           validator:

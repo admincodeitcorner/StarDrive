@@ -2,7 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:star_drive/core/error/failure.dart';
 import 'package:star_drive/core/network/api_error_handler.dart';
 import 'package:star_drive/core/network/error_mapper.dart';
-import 'package:star_drive/features/auth/data/dataresource/auth_remote_datasource.dart';
+import 'package:star_drive/core/storage/token_storage.dart';
+import 'package:star_drive/features/auth/data/dataresource/remote/auth_remote_datasource.dart';
 import 'package:star_drive/features/auth/data/model/login_request_model.dart';
 import 'package:star_drive/features/auth/data/model/otp_request_model.dart';
 import 'package:star_drive/features/auth/data/model/reset_password_model.dart';
@@ -17,8 +18,13 @@ import '../model/register_request_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
+final TokenStorage tokenStorage;
 
-  AuthRepositoryImpl(this.remoteDataSource);
+AuthRepositoryImpl(
+  this.remoteDataSource,
+  this.tokenStorage,
+);
+
   @override
   Future<Either<Failure, OtpDetails>> sendOtp({
     required String contactNumber,
@@ -125,4 +131,18 @@ class AuthRepositoryImpl implements AuthRepository {
   ) {
     return remoteDataSource.resetPassword(request);
   }
+
+
+@override
+Future<Either<Failure, Unit>> logout() async {
+  try {
+    await remoteDataSource.logout();
+
+    await tokenStorage.clearToken();
+
+    return Right(unit);
+  } on Exception catch (exception) {
+    return Left(ErrorMapper.map(exception));
+  }
+}
 }

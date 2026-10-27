@@ -9,8 +9,8 @@ import 'package:star_drive/features/auth/domain/entities/auth_user.dart';
 import 'widgets/drawer.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String userName;
-  const HomeScreen({super.key, this.userName = ''});
+  // final String userName;
+  const HomeScreen({super.key, });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DrawerScreen(userName: widget.userName),
+      drawer: DrawerScreen(),
       appBar: AppBar(title: Text('Welcome to StarRide')),
       body: const MapScreen(),
       // floatingActionButton: FloatingActionButton(

@@ -16,7 +16,7 @@ import 'package:star_drive/features/auth/data/model/reset_response_model.dart';
 import 'package:star_drive/features/auth/data/model/verify_request_model.dart';
 import 'package:star_drive/features/auth/domain/enums/otp_purpose.dart';
 
-import '../../../../core/network/dio_client.dart';
+import '../../../../../core/network/dio_client.dart';
 
 abstract class AuthRemoteDataSource {
   Future<Either<Exception, ApiResponse<SendOtpResponseModel>>> sendOtp(
@@ -30,6 +30,7 @@ abstract class AuthRemoteDataSource {
   Future<ResetPasswordResponseModel> resetPassword(
     ResetPasswordRequestModel resetPasswordrrequest,
   );
+  Future<void> logout();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -140,7 +141,13 @@ Future<Either<Exception, ApiResponse<AuthResponseModel>>> register(
 
       debugPrint('LOGIN USER: ${result.name}');
       debugPrint('LOGIN TOKEN RECEIVED: ${result.token.isNotEmpty}');
+   if (code == '0000') {
+      final token = result.token;
 
+       if (token != null && token.isNotEmpty) {
+        await tokenStorage.saveToken(token);
+      }
+    }
       return result;
     } catch (e, stackTrace) {
       debugPrint('LOGIN PARSING ERROR: $e');
@@ -236,4 +243,30 @@ Future<Either<Exception, ApiResponse<AuthResponseModel>>> register(
       rethrow;
     }
   }
+  @override
+Future<void> logout() async {
+  final result = await apiClient.postApiResponse(
+    ApiEndpoints.logout,
+    null,
+  );
+
+  result.fold(
+    (exception) => throw exception,
+    (response) {
+      final body = response.data;
+
+      if (body is! Map) {
+        throw const FormatException(
+          'Logout response is empty or invalid.',
+        );
+      }
+
+      if (body['code']?.toString() != '0000') {
+        throw FormatException(
+          body['message']?.toString() ?? 'Logout failed.',
+        );
+      }
+    },
+  );
+}
 }

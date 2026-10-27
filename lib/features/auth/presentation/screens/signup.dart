@@ -241,9 +241,12 @@ String get _dobApi {
                             // ),
                             PasswordTextField(
                               controller: passwordController,
+
                               validator: AuthValidator.validatePassword,
+                              textInputAction: .next,
                             ),
                             PasswordTextField(
+                              textInputAction: .done,
                               labelText: 'Confirm Password',
                               hintText: 'Re-enter password',
                               controller: confirmPasswordController,

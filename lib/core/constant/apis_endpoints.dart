@@ -8,7 +8,11 @@ class ApiEndpoints {
   static const String sendOtp = 'otp/send';
   static const verifyOtp = 'otp/verify';
   static const resetPassword = 'auth/reset-password';
+    static const String logout = 'auth/logout';
+    //driver
   static const driverDoc = 'driver/documents';
   static const String vechicleDetail = 'Vehicle/vehicle-details';
+  static const String becomeDriver= 'driver/become-driver';
+  static const String onboardStatus = 'driver/onboarding-status';
 
 }
