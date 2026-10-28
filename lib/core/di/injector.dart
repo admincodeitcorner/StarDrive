@@ -169,10 +169,10 @@ sl.registerLazySingleton<LocationRepository>(
 sl.registerFactory<MapBloc>(
   () => MapBloc(sl<LocationRepository>()),
 );
-sl.registerLazySingleton<RouteDataSource>(
-  () => RouteDataSourceImpl(
-    sl<DioClient>(),
-  ));
+// sl.registerLazySingleton<RouteDataSource>(
+//   () => RouteDataSourceImpl(
+//     sl<DioClient>(),
+//   ));
   //Become Driver
   sl.registerLazySingleton<BecomeDriverRemoteDataSource>(
   () => BecomeDriverRemoteDataSourceImpl(

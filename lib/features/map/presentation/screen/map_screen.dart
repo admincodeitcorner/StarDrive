@@ -9,14 +9,18 @@ import 'package:star_drive/core/constant/app_images.dart';
 import 'package:star_drive/core/di/injector.dart';
 import 'package:star_drive/features/map/data/datasource/route_datasource.dart';
 
-import 'package:star_drive/features/map/presentation/screen/google_map_navigation.dart';
+import 'package:star_drive/features/map/presentation/screen/widgets/google_map_navigation.dart';
 import 'package:star_drive/features/map/presentation/screen/widgets/map_render_screen.dart';
 
-import 'package:star_drive/features/map/presentation/screen/widgets/search_destination_screen.dart';
+import 'package:star_drive/features/map/presentation/screen/widgets/search_destination_widget.dart';
 
+import '../../domain/entities/ride_estimate_request_entity.dart';
+import '../../domain/entities/ride_estimate_response_entity.dart';
 import '../bloc/map_bloc/map_bloc.dart';
 import '../bloc/ride_estimate/ride_estimate_bloc.dart';
+import '../bloc/ride_estimate/ride_estimate_event.dart';
 import '../bloc/ride_estimate/ride_estimate_state.dart';
+import '../utils/polyline_decoder.dart';
 import 'widgets/fare_selection_widgets.dart';
 import 'widgets/route_summary_card.dart';
 
@@ -41,11 +45,11 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   LatLng? _selectedDestination;
 
   final Geocoding geocoding = Geocoding();
-  late final RouteDataSource _routeDataSource;
+  // late final RouteDataSource _routeDataSource;
   @override
   void initState() {
     super.initState();
-    _routeDataSource = sl<RouteDataSource>();
+    // _routeDataSource = sl<RouteDataSource>();
 
     WidgetsBinding.instance.addObserver(this);
   }
@@ -253,35 +257,25 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> drawRoadRoute({
-    required LatLng pickup,
-    required LatLng destination,
-  }) async {
+  Future<void> drawRouteFromEstimate(RideEstimateEntity estimate) async {
     final controller = _controller;
 
     if (controller == null || !_styleLoaded) {
       debugPrint('Map is not ready.');
       return;
     }
-    if (!mounted) return;
 
-    setState(() {
-      _selectedDestination = destination;
-      _routeAvailable = true;
-    });
     try {
-      final route = await _routeDataSource.getRoadRoute(
-        pickup: pickup,
-        destination: destination,
+      final routePoints = PolylineDecoder.decode(
+        estimate.polyline,
+        precision: estimate.polylinePrecision,
       );
 
-      if (!mounted) return;
-
-      final routePoints = route.points
-          .map((point) => LatLng(point.latitude, point.longitude))
-          .toList();
+      if (routePoints.isEmpty) return;
 
       await controller.clearLines();
+      await controller
+          .clearSymbols(); // purana destination marker hatane ke liye
 
       await controller.addLine(
         LineOptions(
@@ -289,21 +283,17 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
           lineColor: '#FF7900',
           lineWidth: 5,
           lineOpacity: 0.95,
+          lineJoin: 'round',
         ),
       );
-      await _addDestinationMarker(destination);
-      final latitudes = routePoints.map((p) => p.latitude);
-      final longitudes = routePoints.map((p) => p.longitude);
 
+      // Destination marker = route ka last point
+      await _addDestinationMarker(routePoints.last);
+
+      // Bounds API se aa rahe hain, dobara calculate karne ki zaroorat nahi
       final bounds = LatLngBounds(
-        southwest: LatLng(
-          latitudes.reduce((a, b) => a < b ? a : b),
-          longitudes.reduce((a, b) => a < b ? a : b),
-        ),
-        northeast: LatLng(
-          latitudes.reduce((a, b) => a > b ? a : b),
-          longitudes.reduce((a, b) => a > b ? a : b),
-        ),
+        southwest: LatLng(estimate.bounds.minLat, estimate.bounds.minLon),
+        northeast: LatLng(estimate.bounds.maxLat, estimate.bounds.maxLon),
       );
 
       await controller.animateCamera(
@@ -315,22 +305,14 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
           bottom: 250,
         ),
       );
-      if (!mounted) return;
-
-      debugPrint('Route points: ${routePoints.length}');
-      debugPrint('Distance: ${route.distanceKm.toStringAsFixed(2)} km');
-      debugPrint(
-        'Duration: ${route.durationMinutes.toStringAsFixed(0)} minutes',
-      );
     } catch (e, stackTrace) {
-      debugPrint('Route calculation failed: $e');
+      debugPrint('Route draw failed: $e');
       debugPrintStack(stackTrace: stackTrace);
 
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Could not calculate route. Please try again.'),
+          content: Text('Could not draw route. Please try again.'),
         ),
       );
     }
@@ -359,59 +341,79 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
           if (state is MapLocationSuccess) {
             final position = state.position;
 
-            return Stack(
-              children: [
-                MapRenderScreen(
-                  position: position,
-                  onMapCreated: _onMapCreated,
-                  onStyleLoaded: _onStyleLoaded,
-                ),
-
-                if (_routeAvailable && _selectedDestination != null)
-                  GoogleMapNavigation(
-                    selectedDestination: _selectedDestination!,
+            return BlocListener<RideEstimateBloc, RideEstimateState>(
+              listener: (context, state) {
+                if (state is RideEstimateSuccess) {
+                  drawRouteFromEstimate(state.estimate);
+                }
+              },
+              child: Stack(
+                children: [
+                  MapRenderScreen(
+                    position: position,
+                    onMapCreated: _onMapCreated,
+                    onStyleLoaded: _onStyleLoaded,
                   ),
 
-                SearchDestinationWidget(
-                  position: position,
-                  onDestinationSelected: (destination) async {
-                    await drawRoadRoute(
-                      pickup: LatLng(position.latitude, position.longitude),
-                      destination: destination.coordinates,
-                    );
+                  if (_routeAvailable && _selectedDestination != null)
+                    GoogleMapNavigation(
+                      selectedDestination: _selectedDestination!,
+                    ),
 
-                    if (!mounted) return;
+                  SearchDestinationWidget(
+                    position: position,
+                    onDestinationSelected: (destination)async  {
+                        if (!mounted) return;
+                      setState(() {
+                        _selectedDestination = destination.coordinates;
+                        _destinationName = destination.name;
+                        _routeAvailable = true;
+                      });
 
-                    _showCarFareSelection(
-                      pickupName: 'Current location',
-                      destinationName: destination.name,
-                    );
-                  },
-                  // onDestinationSelected: (destination) {
-                  //   return drawRoadRoute(
-                  //     pickup: LatLng(position.latitude, position.longitude),
-                  //     destination: destination.coordinates,
-                  //   );
-                  // },
-                ),
-                if (_routeAvailable)
-                  BlocBuilder<RideEstimateBloc, RideEstimateState>(
-                    builder: (context, estimateState) {
-                      if (estimateState is! RideEstimateSuccess) {
-                        return const SizedBox.shrink();
-                      }
+                      context.read<RideEstimateBloc>().add(
+                        RideEstimateRequested(
+                          RideEstimateRequestEntity(
+                            vehicleType:
+                                'car', 
+                            pickup: RideEstimateLocationEntity(
+                              lat: position.latitude,
+                              lon: position.longitude,
+                              name: _pickupName,
+                            ),
+                            drop: RideEstimateLocationEntity(
+                              lat: destination.coordinates.latitude,
+                              lon: destination.coordinates.longitude,
+                              name: destination.name,
+                            ),
+                          ),
+                        ),
+                      );
 
-                      final estimate = estimateState.estimate;
-
-                      return RouteSummaryCard(
+                      _showCarFareSelection(
                         pickupName: _pickupName,
-                        destinationName: _destinationName,
-                        estimatedMinutes: estimate.durationMin,
-                        distanceKm: estimate.distanceKm,
+                        destinationName: destination.name,
                       );
                     },
                   ),
-              ],
+                  if (_routeAvailable)
+                    BlocBuilder<RideEstimateBloc, RideEstimateState>(
+                      builder: (context, estimateState) {
+                        if (estimateState is! RideEstimateSuccess) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final estimate = estimateState.estimate;
+
+                        return RouteSummaryCard(
+                          pickupName: _pickupName,
+                          destinationName: _destinationName,
+                          estimatedMinutes: estimate.durationMin,
+                          distanceKm: estimate.distanceKm,
+                        );
+                      },
+                    ),
+                ],
+              ),
             );
           }
 

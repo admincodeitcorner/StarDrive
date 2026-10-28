@@ -15,23 +15,42 @@ class OnboardingRemoteDataSourceImpl
     required this.dioClient,
   });
 
-  @override
+   @override
   Future<OnboardingStatusModel> getOnboardingStatus() async {
-    final response = await dioClient.getApiResponse(
+    final result = await dioClient.getApiResponse(
       ApiEndpoints.onboardStatus,
     );
 
-    final body = response as Map<String, dynamic>;
+    return result.fold(
+      (exception) {
+        throw exception;
+      },
+      (response) {
+        final body = response.data;
 
-    if (body['code'] != '0000') {
-      throw Exception(
-        body['message']?.toString() ??
-            'Unable to retrieve onboarding status',
-      );
-    }
+        if (body is! Map<String, dynamic>) {
+          throw Exception(
+            'Invalid onboarding API response format',
+          );
+        }
 
-    return OnboardingStatusModel.fromJson(
-      body['data'] as Map<String, dynamic>,
+        if (body['code']?.toString() != '0000') {
+          throw Exception(
+            body['message']?.toString() ??
+                'Unable to retrieve onboarding status',
+          );
+        }
+
+        final data = body['data'];
+
+        if (data is! Map<String, dynamic>) {
+          throw Exception(
+            'Invalid onboarding status data',
+          );
+        }
+
+        return OnboardingStatusModel.fromJson(data);
+      },
     );
   }
 }
