@@ -1,12 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:star_drive/features/map/presentation/screen/map_screen.dart';
-import 'package:star_drive/features/auth/domain/entities/auth_user.dart';
 
-import 'widgets/drawer.dart';
+
+import 'package:star_drive/features/dashboard/presentation/screens/drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   // final String userName;

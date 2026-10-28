@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:hive_ce_flutter/adapters.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:star_drive/app_bloc_observer.dart';
+import 'package:star_drive/core/constant/theme/app_theme.dart';
 import 'package:star_drive/core/di/injector.dart';
 import 'package:star_drive/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:star_drive/features/auth/presentation/bloc/register/register_bloc.dart';
@@ -19,6 +22,15 @@ import 'features/map/presentation/bloc/ride_estimate/ride_estimate_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // // Hive initialize karo
+  // final directory = await getApplicationDocumentsDirectory();
+  // Hive.init(directory.path);
+
+  // // User data save karne ke liye box open karo
+  // await Hive.openBox('userBox');
+  await Hive.openBox<String>('theme_settings');
+
   Bloc.observer = AppBlocObserver();
   setupDependencies();
   await Hive.initFlutter();
@@ -50,17 +62,29 @@ class StarDriveApp extends StatelessWidget {
         ),
         BlocProvider(create: (_) => sl<BecomeDriverBloc>()),
         BlocProvider(create: (_) => sl<RideEstimateBloc>()),
+                BlocProvider<ThemeBloc>(create: (_) => sl<ThemeBloc>()),
+
       ],
-      child: ScreenUtilPlusInit(
-        designSize: const Size(360, 690),
+      
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, state) {
+          return ScreenUtilPlusInit(
+            designSize: const Size(360, 690),
         minTextAdapt: true,
         splitScreenMode: true,
         autoRebuild: false,
-        builder: (context, child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(),
-            home: RoleSelectionScreen(),
+            builder: (context, child) {
+              return MaterialApp(
+                 debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: state.mode,
+              home: SplashScreen(),
+              );
+            },
+            child: MaterialApp(
+             
+            ),
           );
         },
       ),

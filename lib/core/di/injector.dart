@@ -1,13 +1,26 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
-import 'package:star_drive/features/auth/domain/usecase/logout_usecase.dart';
-import 'package:star_drive/features/auth/presentation/bloc/logout/logout_bloc.dart';
-import 'package:star_drive/features/become_driver/domain/usecase/onboard_usecase.dart';
-import 'package:star_drive/features/map/data/datasource/ride_estimate_datasource.dart';
-import 'package:star_drive/features/map/data/datasource/route_datasource.dart';
-import '../../features/auth/data/dataresource/local/auth_local_data_storage.dart';
-import '../../features/auth/data/dataresource/remote/auth_remote_datasource.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:star_drive/features/dashboard/data/datasource/user_profile_remote_datasource.dart';
+import 'package:star_drive/features/dashboard/data/repository/user_profile_repository_impl.dart';
+import 'package:star_drive/features/dashboard/domain/repository/user_profile_repositories.dart';
+import 'package:star_drive/features/dashboard/domain/usecase/get_user_profile.dart';
+import 'package:star_drive/features/dashboard/domain/usecase/update_phone_number.dart';
+import 'package:star_drive/features/dashboard/domain/usecase/verify_change_phone_otp_usecase.dart';
+import 'package:star_drive/features/dashboard/presentation/bloc/user_profile_bloc.dart';
+import 'package:star_drive/features/dashboard/data/datasource/ride_history_remote_datasource.dart';
+import 'package:star_drive/features/dashboard/data/repository/ride_history_repository_impl.dart';
+import 'package:star_drive/features/dashboard/domain/repository/ride_history_repository.dart';
+import 'package:star_drive/features/dashboard/domain/usecase/get_ride_history.dart';
+import 'package:star_drive/features/dashboard/presentation/screens/ride_history/presentation/bloc/ride_history_bloc.dart';
+import 'package:star_drive/features/theme/data/datasource/theme_local_datasource.dart';
+import 'package:star_drive/features/theme/data/repositories/theme_repository_impl.dart';
+import 'package:star_drive/features/theme/domain/repositories/theme_repository.dart';
+import 'package:star_drive/features/theme/domain/usecases/get_theme_mode.dart';
+import 'package:star_drive/features/theme/domain/usecases/save_theme_mode.dart';
+import 'package:star_drive/features/theme/presentation/bloc/theme_bloc.dart';
+import '../../features/auth/data/dataresource/auth_remote_datasource.dart';
 import 'package:star_drive/features/auth/data/repository/auth_repositories_impl.dart';
 import 'package:star_drive/features/auth/domain/repository/auth_repoitory.dart';
 import 'package:star_drive/features/auth/domain/usecase/login_use_case.dart';
@@ -88,6 +101,14 @@ sl.registerLazySingleton(() => AuthLocalStorage());
   ),
 );
 
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+  () => AuthRemoteDataSourceImpl(
+    sl<Dio>(),
+    sl<DioClient>(),
+    sl<TokenStorage>(),
+  ),
+);
+
   // Use case
   sl.registerLazySingleton<RegisterUser>(
     () => RegisterUser(sl<AuthRepository>()),
@@ -103,6 +124,11 @@ sl.registerLazySingleton(() => AuthLocalStorage());
   sl.registerLazySingleton<ResetPasswordUseCase>(
     () => ResetPasswordUseCase(sl<AuthRepository>()),
   );
+//   sl.registerLazySingleton<VerifyChangePhoneOtpUseCase>(
+//   () => VerifyChangePhoneOtpUseCase(
+//     sl<AuthRepository>(),
+//   ),
+// );
   sl.registerFactory<AuthBloc>(
     () => AuthBloc(registerUser: sl(), sendOtp: sl(), verifyOtpUseCase: sl(), authLocalStorage: sl()),
   );
@@ -203,6 +229,38 @@ sl.registerFactory<BecomeDriverBloc>(
 sl.registerLazySingleton<OnboardingRemoteDataSource>(
   () => OnboardingRemoteDataSourceImpl(
     dioClient: sl<DioClient>(),
+  // History DataSource
+sl.registerLazySingleton<HistoryRemoteDataSource>(
+  () => HistoryRemoteDataSourceImpl(
+    sl<Dio>(),
+  ),
+);
+
+// History Repository
+sl.registerLazySingleton<HistoryRepository>(
+  () => HistoryRepositoryImpl(
+    sl<HistoryRemoteDataSource>(),
+  ),
+);
+
+// History UseCase
+sl.registerLazySingleton<GetRideHistory>(
+  () => GetRideHistory(
+    sl<HistoryRepository>(),
+  ),
+);
+
+// History BLoC
+sl.registerFactory<HistoryBloc>(
+  () => HistoryBloc(
+    getRideHistory: sl<GetRideHistory>(),
+  ),
+);
+
+// Data Source
+sl.registerLazySingleton<UserProfileRemoteDataSource>(
+  () => UserProfileRemoteDataSourceImpl(
+    dio: sl<Dio>(),
   ),
 );
 
@@ -249,6 +307,70 @@ sl.registerLazySingleton(
 sl.registerFactory(
   () => RideEstimateBloc(
     getRideEstimate: sl(),
+sl.registerLazySingleton<UserProfileRepository>(
+  () => UserProfileRepositoryImpl(
+    sl<UserProfileRemoteDataSource>(),
+  ),
+);
+
+// UseCase
+sl.registerLazySingleton<GetUserProfile>(
+  () => GetUserProfile(
+    repository: sl<UserProfileRepository>(),
+  ),
+);
+
+//updatePhoneNumber
+sl.registerLazySingleton<UpdatePhoneNumber>(
+  () => UpdatePhoneNumber(
+    repository: sl<UserProfileRepository>(),
+  ),
+);
+
+// Theme local data source
+sl.registerLazySingleton<ThemeLocalDataSource>(
+  () => ThemeLocalDataSource(
+    Hive.box<String>('theme_settings'),
+  ),
+);
+
+// Theme repository
+sl.registerLazySingleton<ThemeRepository>(
+  () => ThemeRepositoryImpl(
+    sl<ThemeLocalDataSource>(),
+  ),
+);
+
+// Get saved theme
+sl.registerLazySingleton<GetThemeMode>(
+  () => GetThemeMode(
+    sl<ThemeRepository>(),
+  ),
+);
+
+// Save selected theme
+sl.registerLazySingleton<SaveThemeMode>(
+  () => SaveThemeMode(
+    sl<ThemeRepository>(),
+  ),
+);
+
+// Theme BLoC
+sl.registerFactory<ThemeBloc>(
+  () => ThemeBloc(
+    getThemeMode: sl<GetThemeMode>(),
+    saveThemeMode: sl<SaveThemeMode>(),
+  ),
+);
+
+// BLoC
+sl.registerFactory<UserProfileBloc>(
+  () => UserProfileBloc(
+    getUserProfile: sl<GetUserProfile>(),
+    updatePhoneNumber: sl<UpdatePhoneNumber>(),
+    sendOtpUsecase: sl<SendOtpUsecase>(),
+    // verifyChangePhoneOtpUseCase:
+    //     sl<VerifyChangePhoneOtpUseCase>(),
   ),
 );
 }

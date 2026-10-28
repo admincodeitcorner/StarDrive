@@ -11,6 +11,7 @@ class AppColors {
   // Backgrounds
   static const Color background = Color(0xFFFAFAFA);
   static const Color surface = Colors.white;
+  static const Color darkThemeBg = Color(0xFF121212);
 
   // Text
   static const Color textPrimary = Color(0xFF14172B);
@@ -24,8 +25,10 @@ class AppColors {
   // Other
   static const Color white = Colors.white;
   static const Color shadow = Color(0x33FF7A00);
-    static const Color fieldFill = Color(0xFFF5F5F5);
+  static const Color fieldFill = Color(0xFFF5F5F5);
   static const Color link = Color(0xFF3B82F6);
+  static const Color success = Color(0xFF22C55E);
+  static const Color cardColor = Color(0xFF1E1E1E);
 
   // error
   static const Color error = Colors.red;

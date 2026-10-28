@@ -18,6 +18,7 @@ class SendOtpRequestModel {
       'purpose': switch (purpose) {
         OtpPurpose.register => 'Registration',
         OtpPurpose.forgotPassword => 'ForgotPassword',
+        OtpPurpose.changePhone => 'ChangePhone',
       },
     };
   }

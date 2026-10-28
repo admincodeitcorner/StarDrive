@@ -16,4 +16,8 @@ class ApiEndpoints {
   static const String onboardStatus = 'driver/onboarding-status';
   static const String rideEstimate= 'ride/estimate';
 
+  static const String rideHistory = 'ride/history';
+  static const String userProfile = 'user/profile';
+  static const String updateProfile = 'user/updateProfile';
+  
 }
