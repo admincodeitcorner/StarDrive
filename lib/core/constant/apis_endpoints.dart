@@ -10,5 +10,8 @@ class ApiEndpoints {
   static const resetPassword = 'auth/reset-password';
   static const driverDoc = 'driver/documents';
   static const String vechicleDetail = 'Vehicle/vehicle-details';
-
+  static const String rideHistory = 'ride/history';
+  static const String userProfile = 'user/profile';
+  static const String updateProfile = 'user/updateProfile';
+  static const String logout = 'auth/logout';
 }
