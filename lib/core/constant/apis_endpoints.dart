@@ -14,5 +14,6 @@ class ApiEndpoints {
   static const String vechicleDetail = 'Vehicle/vehicle-details';
   static const String becomeDriver= 'driver/become-driver';
   static const String onboardStatus = 'driver/onboarding-status';
+  static const String rideEstimate= 'ride/estimate';
 
 }

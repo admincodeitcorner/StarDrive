@@ -8,14 +8,16 @@ import 'package:star_drive/features/auth/presentation/bloc/login/login_bloc.dart
 import 'package:star_drive/features/auth/presentation/bloc/register/register_bloc.dart';
 import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_password_bloc.dart';
 import 'package:star_drive/features/auth/presentation/screens/role_selection_screen.dart';
-import 'package:star_drive/features/become_driver/presentation/becomeDriverBloc/become_driver_bloc.dart';
+import 'package:star_drive/features/become_driver/presentation/bloc/becomeDriverBloc/become_driver_bloc.dart';
 import 'package:star_drive/features/driver_verification/presentataion/bloc/driver_verification_bloc/driver_verification_bloc.dart';
 import 'features/driver_verification/presentataion/bloc/vechile_details_bloc/vechile_details_bloc_bloc.dart';
 import 'package:star_drive/features/map/presentation/screen/map_screen.dart';
 
 import 'features/auth/data/dataresource/local/auth_local_data_storage.dart';
+import 'features/map/map_import.dart';
+import 'features/map/presentation/bloc/ride_estimate/ride_estimate_bloc.dart';
 
-void main()async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = AppBlocObserver();
   setupDependencies();
@@ -43,21 +45,24 @@ class StarDriveApp extends StatelessWidget {
         BlocProvider<VehicleDetailsBloc>(
           create: (_) => sl<VehicleDetailsBloc>(),
         ),
-        BlocProvider(create: (_)=>sl<BecomeDriverBloc>())
+        BlocProvider(
+          create: (_) => sl<MapBloc>()..add(const InitializeMapEvent()),
+        ),
+        BlocProvider(create: (_) => sl<BecomeDriverBloc>()),
+        BlocProvider(create: (_) => sl<RideEstimateBloc>()),
       ],
       child: ScreenUtilPlusInit(
         designSize: const Size(360, 690),
         minTextAdapt: true,
         splitScreenMode: true,
         autoRebuild: false,
-      builder: (context,child){
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(),
-          home: RoleSelectionScreen(),
-      
-        );
-      }
+        builder: (context, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(),
+            home: RoleSelectionScreen(),
+          );
+        },
       ),
     );
   }

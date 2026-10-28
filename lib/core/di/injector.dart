@@ -3,6 +3,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:star_drive/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:star_drive/features/auth/presentation/bloc/logout/logout_bloc.dart';
+import 'package:star_drive/features/become_driver/domain/usecase/onboard_usecase.dart';
+import 'package:star_drive/features/map/data/datasource/ride_estimate_datasource.dart';
 import 'package:star_drive/features/map/data/datasource/route_datasource.dart';
 import '../../features/auth/data/dataresource/local/auth_local_data_storage.dart';
 import '../../features/auth/data/dataresource/remote/auth_remote_datasource.dart';
@@ -16,13 +18,22 @@ import 'package:star_drive/features/auth/domain/usecase/verified_otp_usecase.dar
 import 'package:star_drive/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:star_drive/features/auth/presentation/bloc/register/register_bloc.dart';
 import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_password_bloc.dart';
-import 'package:star_drive/features/map/data/repository/map_repository_imp.dart';
+import 'package:star_drive/features/map/data/repository/map_repository_impl.dart';
 import 'package:star_drive/features/map/map_import.dart';
 import '../../features/become_driver/data/data_source/become_driver_remote_dataSource.dart';
+import '../../features/become_driver/data/data_source/on_board_status_remote_datasource.dart';
 import '../../features/become_driver/data/repositories/become_driver_repository_impl.dart';
+import '../../features/become_driver/data/repositories/onboard_status_repository_impl.dart';
 import '../../features/become_driver/domain/repositories/become_driver_repository.dart';
+import '../../features/become_driver/domain/repositories/onboard_status_repository.dart';
 import '../../features/become_driver/domain/usecase/become_driver_usecase.dart';
-import '../../features/become_driver/presentation/becomeDriverBloc/become_driver_bloc.dart';
+import '../../features/become_driver/presentation/bloc/becomeDriverBloc/become_driver_bloc.dart';
+import '../../features/become_driver/presentation/bloc/onboard_status_bloc/onboard_status_bloc_bloc.dart';
+import '../../features/map/data/repository/ride_estimate_repository_impl.dart';
+import '../../features/map/domain/repository/ride_estimate_repository.dart' show RideEstimateRepository;
+import '../../features/map/domain/usecase/ride_estimate_usecase.dart';
+import '../../features/map/presentation/bloc/map_bloc/map_bloc.dart';
+import '../../features/map/presentation/bloc/ride_estimate/ride_estimate_bloc.dart';
 import '../network/dio_client.dart';
 import 'package:star_drive/features/map/data/datasource/location_data_source.dart';
 import 'package:star_drive/features/driver_verification/data/datasource/driver_documents_remote_datasource.dart';
@@ -185,6 +196,59 @@ sl.registerLazySingleton<BecomeDriverUseCase>(
 sl.registerFactory<BecomeDriverBloc>(
   () => BecomeDriverBloc(
     sl<BecomeDriverUseCase>(),
+  ),
+);
+//onboard Status
+// Data source
+sl.registerLazySingleton<OnboardingRemoteDataSource>(
+  () => OnboardingRemoteDataSourceImpl(
+    dioClient: sl<DioClient>(),
+  ),
+);
+
+// Repository
+sl.registerLazySingleton<OnboardingRepository>(
+  () => OnboardingRepositoryImpl(
+    remoteDataSource: sl<OnboardingRemoteDataSource>(),
+  ),
+);
+
+// Use case
+sl.registerLazySingleton(
+  () => OnboardingStatusUseCase(sl<OnboardingRepository>()),
+);
+
+// BLoC
+sl.registerFactory(
+  () => OnboardingBloc(
+    getOnboardingStatus: sl<OnboardingStatusUseCase>(),
+  ),
+);
+//rideEstimate
+// Data source
+sl.registerLazySingleton<RideEstimateRemoteDataSource>(
+  () => RideEstimateRemoteDataSourceImpl(
+    dioClient: sl(),
+  ),
+);
+
+// Repository
+sl.registerLazySingleton<RideEstimateRepository>(
+  () => RideEstimateRepositoryImpl(
+    remoteDataSource: sl(),
+    
+  ),
+);
+
+// Use case
+sl.registerLazySingleton(
+  () => GetRideEstimate(sl()),
+);
+
+// BLoC
+sl.registerFactory(
+  () => RideEstimateBloc(
+    getRideEstimate: sl(),
   ),
 );
 }

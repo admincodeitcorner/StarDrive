@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:star_drive/features/map/presentation/screen/widgets/route_search_screen.dart';
+
+import '../../bloc/ride_estimate/ride_estimate_bloc.dart';
 
 class SearchDestinationScreen extends StatelessWidget {
   SearchDestinationScreen({
@@ -71,23 +74,22 @@ class SearchDestinationScreen extends StatelessWidget {
 
               if (!context.mounted) return;
 
+              final estimateBloc = context.read<RideEstimateBloc>();
+
               final destination = await Navigator.push<StaticDestination>(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => RouteSearchScreen(
-                    pickup: LatLng(position.latitude, position.longitude),
-                    pickupAddress: pickupAddress,
+                  builder: (_) => BlocProvider.value(
+                    value: estimateBloc,
+                    child: RouteSearchScreen(
+                      pickup: LatLng(position.latitude, position.longitude),
+                      pickupAddress: pickupAddress,
+                    ),
                   ),
                 ),
               );
 
               if (!context.mounted || destination == null) return;
-
-              debugPrint('Destination: ${destination.name}');
-              debugPrint(
-                'Coordinates: ${destination.coordinates.latitude}, '
-                '${destination.coordinates.longitude}',
-              );
 
               await onDestinationSelected(destination);
             },

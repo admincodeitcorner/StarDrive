@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,45 +8,38 @@ import 'package:geocoding/geocoding.dart';
 import 'package:star_drive/core/constant/app_images.dart';
 import 'package:star_drive/core/di/injector.dart';
 import 'package:star_drive/features/map/data/datasource/route_datasource.dart';
-import 'package:star_drive/features/map/presentation/bloc/map_bloc.dart';
+
 import 'package:star_drive/features/map/presentation/screen/google_map_navigation.dart';
 import 'package:star_drive/features/map/presentation/screen/widgets/map_render_screen.dart';
-import 'package:star_drive/features/map/presentation/screen/widgets/route_search_screen.dart';
+
 import 'package:star_drive/features/map/presentation/screen/widgets/search_destination_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-class MapScreen extends StatelessWidget {
-  const MapScreen({super.key});
+import '../bloc/map_bloc/map_bloc.dart';
+import '../bloc/ride_estimate/ride_estimate_bloc.dart';
+import '../bloc/ride_estimate/ride_estimate_state.dart';
+import 'widgets/fare_selection_widgets.dart';
+import 'widgets/route_summary_card.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<MapBloc>()..add(const InitializeMapEvent()),
-      child: const _MapScreenContent(),
-    );
-  }
-}
-
-class _MapScreenContent extends StatefulWidget {
-  const _MapScreenContent();
+class MapScreen extends StatefulWidget {
+  const MapScreen();
 
   @override
-  State<_MapScreenContent> createState() => _MapScreenContentState();
+  State<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenContentState extends State<_MapScreenContent>
-    with WidgetsBindingObserver {
+class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   MapLibreMapController? _controller;
-
 
   bool _styleLoaded = false; // Add this line
 
   bool _markerAdded = false;
   bool _settingsOpened = false;
   bool _routeAvailable = false;
-
+  String _pickupName = 'Current location';
+  String _destinationName = '';
+  int _estimatedMinutes = 0;
   LatLng? _selectedDestination;
-  
+
   final Geocoding geocoding = Geocoding();
   late final RouteDataSource _routeDataSource;
   @override
@@ -236,6 +226,33 @@ class _MapScreenContentState extends State<_MapScreenContent>
     );
   }
 
+  void _showCarFareSelection({
+    required String pickupName,
+    required String destinationName,
+  }) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return BlocProvider.value(
+          value: context.read<RideEstimateBloc>(),
+          child: FareSelectionSheet(
+            onFindDrivers: (vehicleId, fare, autoAccept) {
+              Navigator.of(sheetContext).pop();
+
+              // Next step: ride request API call
+            },
+            onRetry: () {
+              // Retry handling, if required
+            },
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> drawRoadRoute({
     required LatLng pickup,
     required LatLng destination,
@@ -357,13 +374,43 @@ class _MapScreenContentState extends State<_MapScreenContent>
 
                 SearchDestinationScreen(
                   position: position,
-                  onDestinationSelected: (destination) {
-                    return drawRoadRoute(
+                  onDestinationSelected: (destination) async {
+                    await drawRoadRoute(
                       pickup: LatLng(position.latitude, position.longitude),
                       destination: destination.coordinates,
                     );
+
+                    if (!mounted) return;
+
+                    _showCarFareSelection(
+                      pickupName: 'Current location',
+                      destinationName: destination.name,
+                    );
                   },
+                  // onDestinationSelected: (destination) {
+                  //   return drawRoadRoute(
+                  //     pickup: LatLng(position.latitude, position.longitude),
+                  //     destination: destination.coordinates,
+                  //   );
+                  // },
                 ),
+                if (_routeAvailable)
+                  BlocBuilder<RideEstimateBloc, RideEstimateState>(
+                    builder: (context, estimateState) {
+                      if (estimateState is! RideEstimateSuccess) {
+                        return const SizedBox.shrink();
+                      }
+
+                      final estimate = estimateState.estimate;
+
+                      return RouteSummaryCard(
+                        pickupName: _pickupName,
+                        destinationName: _destinationName,
+                        estimatedMinutes: estimate.durationMin,
+                        distanceKm: estimate.distanceKm,
+                      );
+                    },
+                  ),
               ],
             );
           }

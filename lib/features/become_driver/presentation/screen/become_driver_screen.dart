@@ -12,9 +12,9 @@ import '../../domain/entity/become_driver_request_entity.dart';
 
 import '../../../auth/presentation/auth_validator.dart/auth_validator.dart';
 import '../../../widgets/custom_date_picker.dart';
-import '../becomeDriverBloc/become_driver_bloc.dart';
-import '../becomeDriverBloc/become_driver_event.dart';
-import '../becomeDriverBloc/become_driver_state.dart';
+import '../bloc/becomeDriverBloc/become_driver_bloc.dart';
+import '../bloc/becomeDriverBloc/become_driver_event.dart';
+import '../bloc/becomeDriverBloc/become_driver_state.dart';
 
 class BecomeDriverScreen extends StatefulWidget {
   const BecomeDriverScreen({super.key});

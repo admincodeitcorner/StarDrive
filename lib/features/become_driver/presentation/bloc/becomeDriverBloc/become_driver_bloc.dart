@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../domain/usecase/become_driver_usecase.dart';
+import '../../../domain/usecase/become_driver_usecase.dart';
 import 'become_driver_event.dart';
 import 'become_driver_state.dart';
 

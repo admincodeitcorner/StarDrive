@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
+
+import '../../../domain/entities/ride_estimate_request_entity.dart';
+import '../../bloc/ride_estimate/ride_estimate_bloc.dart';
+import '../../bloc/ride_estimate/ride_estimate_event.dart';
 
 class StaticDestination {
   final String name;
@@ -177,9 +182,32 @@ class _RouteSearchScreenState extends State<RouteSearchScreen> {
                   onPressed: _destination == null
                       ? null
                       : () {
+                          final destination = _destination!;
+                          final pickup = widget.pickup;
+                          final drop = destination.coordinates;
+
+                          context.read<RideEstimateBloc>().add(
+                            RideEstimateRequested(
+                              RideEstimateRequestEntity(
+                                vehicleType: 'Car',
+                                pickup: RideEstimateLocationEntity(
+                                  lat: pickup.latitude,
+                                  lon: pickup.longitude,
+                                  name: widget.pickupAddress
+                                      ,
+                                ),
+                                drop: RideEstimateLocationEntity(
+                                  lat: drop.latitude,
+                                  lon: drop.longitude,
+                                  name: destination.name,
+                                ),
+                              ),
+                            ),
+                          );
+
                           Navigator.pop<StaticDestination>(
                             context,
-                            _destination!,
+                            destination,
                           );
                         },
                   style: FilledButton.styleFrom(

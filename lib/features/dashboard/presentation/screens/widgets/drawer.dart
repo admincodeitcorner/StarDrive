@@ -10,7 +10,13 @@ import 'package:star_drive/features/auth/presentation/widgets/custom_auth_button
 import 'package:star_drive/features/dashboard/presentation/screens/profile/profile_setting_screen.dart';
 
 import '../../../../auth/data/dataresource/local/auth_local_data_storage.dart';
+import '../../../../become_driver/domain/enum/onboard_status_enum.dart';
+import '../../../../become_driver/presentation/bloc/onboard_status_bloc/onboard_status_bloc_bloc.dart';
+import '../../../../become_driver/presentation/bloc/onboard_status_bloc/onboard_status_bloc_event.dart';
+import '../../../../become_driver/presentation/bloc/onboard_status_bloc/onboard_status_bloc_state.dart' show OnboardingState, OnboardingFailure, OnboardingSuccess, OnboardingLoading;
 import '../../../../become_driver/presentation/screen/become_driver_screen.dart' show BecomeDriverScreen;
+import '../../../../driver_verification/presentataion/screen/driver_verification_screen.dart';
+import '../../../../driver_verification/presentataion/screen/vechile_detail_screen.dart';
 
 // import 'package:star_drive/features/history/presentation/screen/history_screen.dart';
 
@@ -180,17 +186,82 @@ class DrawerScreen extends StatelessWidget {
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: AuthButton(
-                    text: isDriver ? 'Passenger Mode' : 'Driver Mode',
+           BlocProvider(
+  create: (_) => sl<OnboardingBloc>(),
+  child: BlocConsumer<OnboardingBloc, OnboardingState>(
+    listener: (context, state) {
+      if (state is OnboardingFailure) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.message)),
+        );
+      }
 
-                isLoading: false,
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_)=>BecomeDriverScreen()));
-                },
+      if (state is OnboardingSuccess) {
+        Navigator.pop(context); // Drawer close
+
+        final destination =
+            getNextOnboardingDestination(state.status);
+
+        switch (destination) {
+          case OnboardingDestination.profile:
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => BecomeDriverScreen(),
               ),
-            ),
+            );
+            break;
+
+          case OnboardingDestination.documents:
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => DriverVerificationScreen(),
+              ),
+            );
+            break;
+
+          case OnboardingDestination.vehicle:
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => VechileDetailScreen(),
+              ),
+            );
+            break;
+
+          case OnboardingDestination.dashboard:
+            
+            break;
+        }
+      }
+    },
+    builder: (context, state) {
+      final isLoading = state is OnboardingLoading;
+
+      return AuthButton(
+        text: isDriver ? 'Driver Mode' : 'Become a Driver',
+        isLoading: isLoading,
+        onPressed: () {
+          if (isLoading) return;
+
+          if (isDriver) {
+            context.read<OnboardingBloc>().add(
+              OnboardingStatusRequested(),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => BecomeDriverScreen(),
+              ),
+            );
+          }
+        },
+      );
+    },
+  ),
+)
           ],
         ),
       ),
