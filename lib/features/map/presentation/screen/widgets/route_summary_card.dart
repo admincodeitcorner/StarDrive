@@ -16,18 +16,23 @@ class RouteSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: .center,
-          children: [
-            Text('From: $pickupName'),
-            Text('To: $destinationName'),
-            Text('${distanceKm.toStringAsFixed(1)} km'),
-            Text('$estimatedMinutes minutes'),
-          ],
+    return Positioned(
+      top: 60,
+      left: 16,
+      right: 16,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: .center,
+            children: [
+              Text('From: $pickupName'),
+              Text('To: $destinationName'),
+              Text('${distanceKm.toStringAsFixed(1)} km'),
+              Text('$estimatedMinutes minutes'),
+            ],
+          ),
         ),
       ),
     );
@@ -65,6 +70,9 @@ class RouteSummaryCard extends StatelessWidget {
 //           clipBehavior: Clip.antiAlias,
 //           child: Padding(
 //             padding: const EdgeInsets.symmetric(
+//               horizontal: 16,
+//               vertical: 12,
+//             ),padding: const EdgeInsets.symmetric(
 //               horizontal: 16,
 //               vertical: 12,
 //             ),

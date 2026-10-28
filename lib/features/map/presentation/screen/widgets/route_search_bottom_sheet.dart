@@ -13,20 +13,20 @@ class StaticDestination {
   const StaticDestination({required this.name, required this.coordinates});
 }
 
-class RouteSearchScreen extends StatefulWidget {
+class RouteSearchBottomSheet extends StatefulWidget {
   final LatLng pickup;
   final String pickupAddress;
-  const RouteSearchScreen({
+  const RouteSearchBottomSheet({
     super.key,
     required this.pickup,
     required this.pickupAddress,
   });
 
   @override
-  State<RouteSearchScreen> createState() => _RouteSearchScreenState();
+  State<RouteSearchBottomSheet> createState() => _RouteSearchBottomSheetState();
 }
 
-class _RouteSearchScreenState extends State<RouteSearchScreen> {
+class _RouteSearchBottomSheetState extends State<RouteSearchBottomSheet> {
   StaticDestination? _destination;
 
   final List<StaticDestination> _destinations = const [

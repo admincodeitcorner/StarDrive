@@ -372,7 +372,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                     selectedDestination: _selectedDestination!,
                   ),
 
-                SearchDestinationScreen(
+                SearchDestinationWidget(
                   position: position,
                   onDestinationSelected: (destination) async {
                     await drawRoadRoute(
