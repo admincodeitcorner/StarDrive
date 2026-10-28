@@ -20,7 +20,6 @@ import 'package:star_drive/features/theme/domain/repositories/theme_repository.d
 import 'package:star_drive/features/theme/domain/usecases/get_theme_mode.dart';
 import 'package:star_drive/features/theme/domain/usecases/save_theme_mode.dart';
 import 'package:star_drive/features/theme/presentation/bloc/theme_bloc.dart';
-import '../../features/auth/data/dataresource/auth_remote_datasource.dart';
 import 'package:star_drive/features/auth/data/repository/auth_repositories_impl.dart';
 import 'package:star_drive/features/auth/domain/repository/auth_repoitory.dart';
 import 'package:star_drive/features/auth/domain/usecase/login_use_case.dart';
@@ -33,6 +32,10 @@ import 'package:star_drive/features/auth/presentation/bloc/register/register_blo
 import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_password_bloc.dart';
 import 'package:star_drive/features/map/data/repository/map_repository_impl.dart';
 import 'package:star_drive/features/map/map_import.dart';
+import '../../features/auth/data/dataresource/local/auth_local_data_storage.dart';
+import '../../features/auth/data/dataresource/remote/auth_remote_datasource.dart';
+import '../../features/auth/domain/usecase/logout_usecase.dart';
+import '../../features/auth/presentation/bloc/logout/logout_bloc.dart';
 import '../../features/become_driver/data/data_source/become_driver_remote_dataSource.dart';
 import '../../features/become_driver/data/data_source/on_board_status_remote_datasource.dart';
 import '../../features/become_driver/data/repositories/become_driver_repository_impl.dart';
@@ -40,8 +43,10 @@ import '../../features/become_driver/data/repositories/onboard_status_repository
 import '../../features/become_driver/domain/repositories/become_driver_repository.dart';
 import '../../features/become_driver/domain/repositories/onboard_status_repository.dart';
 import '../../features/become_driver/domain/usecase/become_driver_usecase.dart';
+import '../../features/become_driver/domain/usecase/onboard_usecase.dart';
 import '../../features/become_driver/presentation/bloc/becomeDriverBloc/become_driver_bloc.dart';
 import '../../features/become_driver/presentation/bloc/onboard_status_bloc/onboard_status_bloc_bloc.dart';
+import '../../features/map/data/datasource/ride_estimate_datasource.dart';
 import '../../features/map/data/repository/ride_estimate_repository_impl.dart';
 import '../../features/map/domain/repository/ride_estimate_repository.dart' show RideEstimateRepository;
 import '../../features/map/domain/usecase/ride_estimate_usecase.dart';
@@ -101,13 +106,7 @@ sl.registerLazySingleton(() => AuthLocalStorage());
   ),
 );
 
-  sl.registerLazySingleton<AuthRemoteDataSource>(
-  () => AuthRemoteDataSourceImpl(
-    sl<Dio>(),
-    sl<DioClient>(),
-    sl<TokenStorage>(),
-  ),
-);
+
 
   // Use case
   sl.registerLazySingleton<RegisterUser>(
@@ -228,9 +227,8 @@ sl.registerFactory<BecomeDriverBloc>(
 // Data source
 sl.registerLazySingleton<OnboardingRemoteDataSource>(
   () => OnboardingRemoteDataSourceImpl(
-    dioClient: sl<DioClient>(),
-  // History DataSource
-sl.registerLazySingleton<HistoryRemoteDataSource>(
+    dioClient: sl<DioClient>(),));
+  sl.registerLazySingleton<HistoryRemoteDataSource>(
   () => HistoryRemoteDataSourceImpl(
     sl<Dio>(),
   ),
@@ -307,6 +305,7 @@ sl.registerLazySingleton(
 sl.registerFactory(
   () => RideEstimateBloc(
     getRideEstimate: sl(),
+  ));
 sl.registerLazySingleton<UserProfileRepository>(
   () => UserProfileRepositoryImpl(
     sl<UserProfileRemoteDataSource>(),
