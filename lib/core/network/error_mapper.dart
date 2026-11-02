@@ -1,31 +1,43 @@
+import 'package:dio/dio.dart';
 import 'package:star_drive/core/error/exception.dart';
 import 'package:star_drive/core/error/failure.dart';
 
 class ErrorMapper {
   ErrorMapper._();
 
-  static Failure map(Exception exception) {
-    if (exception is NetworkException) {
-      return NetworkFailure(exception.message);
-    }
+static Failure map(Object error) {
+  // Dio Exception
+  if (error is DioException) {
+    final responseData = error.response?.data;
 
-    if (exception is TimeoutException) {
-      return TimeoutFailure(exception.message);
-    }
+    final message = responseData is Map
+        ? responseData['message']?.toString()
+        : null;
 
-    if (exception is ServerException) {
-      // Status code ke mutabiq failure
-      if (exception.statusCode == 400 || exception.statusCode == 422) {
-        return ValidationFailure(exception.message);
-      }
-
-      return ServerFailure(exception.message);
-    }
-
-    if (exception is ParsingException) {
-      return UnexpectedFailure(exception.message);
-    }
-
-    return UnexpectedFailure(exception.toString());
+    return ServerFailure(
+      message ?? error.message ?? 'Something went wrong',
+    );
   }
-}
+
+  if (error is NetworkException) {
+    return NetworkFailure(error.message);
+  }
+
+  if (error is TimeoutException) {
+    return TimeoutFailure(error.message);
+  }
+
+  if (error is ServerException) {
+    if (error.statusCode == 400 || error.statusCode == 422) {
+      return ValidationFailure(error.message);
+    }
+
+    return ServerFailure(error.message);
+  }
+
+  if (error is ParsingException) {
+    return UnexpectedFailure(error.message);
+  }
+
+  return UnexpectedFailure(error.toString());
+}}

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 
+import '../../../../../core/constant/app_colors.dart';
 import '../../../domain/entities/ride_estimate_request_entity.dart';
 import '../../bloc/ride_estimate/ride_estimate_bloc.dart';
 import '../../bloc/ride_estimate/ride_estimate_event.dart';
@@ -28,6 +29,8 @@ class RouteSearchBottomSheet extends StatefulWidget {
 
 class _RouteSearchBottomSheetState extends State<RouteSearchBottomSheet> {
   StaticDestination? _destination;
+  final TextEditingController _pickupController = TextEditingController();
+  final TextEditingController _destinationController = TextEditingController();
 
   final List<StaticDestination> _destinations = const [
     StaticDestination(
@@ -47,6 +50,19 @@ class _RouteSearchBottomSheetState extends State<RouteSearchBottomSheet> {
       coordinates: LatLng(33.7435, 73.0551),
     ),
   ];
+  @override
+  void initState() {
+    super.initState();
+
+    _pickupController.text = widget.pickupAddress;
+  }
+
+  @override
+  void dispose() {
+    _pickupController.dispose();
+    _destinationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,28 +110,28 @@ class _RouteSearchBottomSheetState extends State<RouteSearchBottomSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'From',
-                            style: TextStyle(color: Colors.grey, fontSize: 17),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Your current location',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          const SizedBox(height: 4),
                           Text(
-                            widget.pickupAddress,
+                            'From',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontSize: 17,
+                            ),
+                          ),
 
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
+                          const SizedBox(height: 4),
+                          TextField(
+                            controller: _pickupController,
+                            readOnly: false,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right),
+                    // const Icon(Icons.chevron_right),
                   ],
                 ),
               ),
@@ -155,10 +171,25 @@ class _RouteSearchBottomSheetState extends State<RouteSearchBottomSheet> {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              _destination?.name ?? 'Choose destination',
-                              style: const TextStyle(fontSize: 18),
+                            TextField(
+                              controller: _destinationController,
+                              decoration: const InputDecoration(
+                                hintText: 'Enter destination',
+                                border: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                              onChanged: (value) {
+                                if (_destination != null &&
+                                    value.trim() != _destination!.name) {
+                                  setState(() {
+                                    _destination = null;
+                                  });
+                                }
+                              },
                             ),
+
+                            //
                           ],
                         ),
                       ),
@@ -193,8 +224,7 @@ class _RouteSearchBottomSheetState extends State<RouteSearchBottomSheet> {
                                 pickup: RideEstimateLocationEntity(
                                   lat: pickup.latitude,
                                   lon: pickup.longitude,
-                                  name: widget.pickupAddress
-                                      ,
+                                  name: widget.pickupAddress,
                                 ),
                                 drop: RideEstimateLocationEntity(
                                   lat: drop.latitude,
@@ -258,6 +288,7 @@ class _RouteSearchBottomSheetState extends State<RouteSearchBottomSheet> {
                   onTap: () {
                     setState(() {
                       _destination = destination;
+                      _destinationController.text = destination.name;
                     });
 
                     Navigator.pop(sheetContext);

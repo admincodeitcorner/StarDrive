@@ -6,34 +6,29 @@
   <component name="ChangeListManager">
     <list default="true" id="66fe8c6d-b957-41c1-953e-b36b5e68b6fa" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/app_bloc_observer.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/app_bloc_observer.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Flutter/Generated.xcconfig" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/Generated.xcconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Flutter/ephemeral/flutter_native_integration.env" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/ephemeral/flutter_native_integration.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Flutter/flutter_export_environment.sh" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/flutter_export_environment.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/core/constant/apis_endpoints.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/constant/apis_endpoints.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/core/di/injector.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/di/injector.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/network/api_responce.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/core/network/api_error_handler.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/network/api_error_handler.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/core/network/api_response.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/network/api_response.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/core/network/dio_client.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/network/dio_client.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/data/dataresource/auth_remote_datasource.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/data/dataresource/auth_remote_datasource.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/data/model/auth_response_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/data/model/auth_response_model.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/data/model/login_request_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/data/model/login_request_model.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/data/model/register_request_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/data/model/register_request_model.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/data/repository/auth_repositories_impl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/data/repository/auth_repositories_impl.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/domain/entities/auth_user.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/domain/entities/auth_user.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/domain/enums/user_role.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/domain/enums/user_role.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/domain/repository/auth_repoitory.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/domain/repository/auth_repoitory.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/domain/usecase/login_use_case.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/domain/usecase/login_use_case.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/domain/usecase/register_use_case.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/domain/usecase/register_use_case.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/presentation/bloc/login/login_bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/presentation/bloc/login/login_bloc.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/presentation/bloc/login/login_event.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/presentation/bloc/login/login_event.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/presentation/bloc/login/login_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/presentation/bloc/login/login_state.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/presentation/bloc/register/register_bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/presentation/bloc/register/register_bloc.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/presentation/bloc/register/register_event.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/presentation/bloc/register/register_event.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/presentation/bloc/register/register_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/presentation/bloc/register/register_state.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/presentation/screens/forgot_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/presentation/screens/forgot_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/core/network/error_mapper.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/network/error_mapper.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/features/auth/presentation/screens/login_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/presentation/screens/login_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/presentation/screens/signup.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/presentation/screens/signup.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/presentation/widgets/custom_phone_field.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/presentation/widgets/custom_phone_field.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/auth/presentation/widgets/custom_text_field.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/auth/presentation/widgets/custom_text_field.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/features/dashboard/presentation/screens/home.screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/dashboard/presentation/screens/home.screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/features/driver_verification/presentataion/screen/cnic_photo-screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/driver_verification/presentataion/screen/cnic_photo-screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/features/driver_verification/presentataion/screen/driver_verification_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/driver_verification/presentataion/screen/driver_verification_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/features/driver_verification/presentataion/screen/vechile_picture_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/driver_verification/presentataion/screen/vechile_picture_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/features/map/data/repository/ride_estimate_repository_impl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/map/data/repository/ride_estimate_repository_impl.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/features/map/presentation/screen/map_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/map/presentation/screen/map_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/features/map/presentation/screen/widgets/route_search_bottom_sheet.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/map/presentation/screen/widgets/route_search_bottom_sheet.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/star_drive.iml" beforeDir="false" afterPath="$PROJECT_DIR$/star_drive.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,11 +64,11 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;naseeba&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;naseeba__v2&quot;,
     &quot;io.flutter.project.isFirstOpen&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;F:/projects/StarDrive&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;advanced.settings&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;flutter.settings&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
 }</component>

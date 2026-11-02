@@ -2,12 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:star_drive/core/signalr/location_sender.dart' show DriverLocationSender;
 import 'package:star_drive/features/dashboard/data/datasource/user_profile_remote_datasource.dart';
 import 'package:star_drive/features/dashboard/data/repository/user_profile_repository_impl.dart';
 import 'package:star_drive/features/dashboard/domain/repository/user_profile_repositories.dart';
 import 'package:star_drive/features/dashboard/domain/usecase/get_user_profile.dart';
 import 'package:star_drive/features/dashboard/domain/usecase/update_phone_number.dart';
-import 'package:star_drive/features/dashboard/domain/usecase/verify_change_phone_otp_usecase.dart';
 import 'package:star_drive/features/dashboard/presentation/bloc/user_profile_bloc.dart';
 import 'package:star_drive/features/dashboard/data/datasource/ride_history_remote_datasource.dart';
 import 'package:star_drive/features/dashboard/data/repository/ride_history_repository_impl.dart';
@@ -46,11 +46,12 @@ import '../../features/become_driver/domain/usecase/become_driver_usecase.dart';
 import '../../features/become_driver/domain/usecase/onboard_usecase.dart';
 import '../../features/become_driver/presentation/bloc/becomeDriverBloc/become_driver_bloc.dart';
 import '../../features/become_driver/presentation/bloc/onboard_status_bloc/onboard_status_bloc_bloc.dart';
+
 import '../../features/map/data/datasource/ride_estimate_datasource.dart';
 import '../../features/map/data/repository/ride_estimate_repository_impl.dart';
 import '../../features/map/domain/repository/ride_estimate_repository.dart' show RideEstimateRepository;
 import '../../features/map/domain/usecase/ride_estimate_usecase.dart';
-import '../../features/map/presentation/bloc/map_bloc/map_bloc.dart';
+
 import '../../features/map/presentation/bloc/ride_estimate/ride_estimate_bloc.dart';
 import '../network/dio_client.dart';
 import 'package:star_drive/features/map/data/datasource/location_data_source.dart';
@@ -65,8 +66,9 @@ import 'package:star_drive/features/driver_verification/domain/usecase/vechile_d
 import 'package:star_drive/features/driver_verification/presentataion/bloc/driver_verification_bloc/driver_verification_bloc.dart';
 import 'package:star_drive/features/driver_verification/presentataion/bloc/vechile_details_bloc/vechile_details_bloc_bloc.dart';
 
+import '../signalr/signalr_service.dart';
 import '../storage/token_storage.dart';
-
+import '../../features/driver/presentation/driver_import.dart';
 final sl = GetIt.instance;
 
 void setupDependencies() {
@@ -368,8 +370,47 @@ sl.registerFactory<UserProfileBloc>(
     getUserProfile: sl<GetUserProfile>(),
     updatePhoneNumber: sl<UpdatePhoneNumber>(),
     sendOtpUsecase: sl<SendOtpUsecase>(),
-    // verifyChangePhoneOtpUseCase:
-    //     sl<VerifyChangePhoneOtpUseCase>(),
+    
   ),
 );
+//ONLINE Driver dependency injector
+// Data source
+sl.registerLazySingleton<DriverAvailabilityRemoteDataSource>(
+  () => DriverAvailabilityRemoteDataSourceImpl(sl()),
+);
+
+// Repository
+sl.registerLazySingleton<DriverAvailabilityRepository>(
+  () => DriverAvailabilityRepositoryImpl(sl()),
+);
+
+// Use case
+sl.registerLazySingleton(
+  () => DriverOnlineUseCase(sl()),
+);
+
+// BLoC — each screen gets its own instance
+sl.registerFactory(
+  () => DriverAvailabilityBloc(
+    onlineUseCase: sl(),
+    offlineUseCase: sl(),
+  ),
+);
+sl.registerLazySingleton<DriverOfflineUseCase>(
+  () => DriverOfflineUseCase(sl()),
+);
+
+sl.registerLazySingleton<SignalRService>(
+  () => SignalRService(
+    tokenStorage: sl<TokenStorage>(),
+  ),
+);
+
+sl.registerLazySingleton<DriverLocationSender>(
+  () => DriverLocationSender(
+    signalRService: sl<SignalRService>(),
+    dioClient: sl<DioClient>(),
+  ),
+);
+
 }

@@ -76,4 +76,23 @@ class DioClient {
       return Left(e);
     }
   }
+  Future<Either<Exception, Response>> patchApiResponse(
+  String url,
+  dynamic body, {
+  Options? options,
+}) async {
+  try {
+    final response = await dio.patch(
+      url,
+      data: body,
+      options: options,
+    );
+
+    return Right(response);
+  } on DioException catch (e) {
+    return Left(ApiErrorHandler.handle(e));
+  } on Exception catch (e) {
+    return Left(e);
+  }
+}
 }

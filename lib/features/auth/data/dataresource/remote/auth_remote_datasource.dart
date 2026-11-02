@@ -1,11 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:star_drive/core/constant/apis_endpoints.dart';
-import 'package:star_drive/core/error/exception.dart';
+import '../../../../../core/constant/apis_endpoints.dart';
 import 'package:star_drive/core/network/api_error_handler.dart';
 import 'package:star_drive/core/network/api_response.dart';
-import 'package:star_drive/core/storage/token_storage.dart';
+import '../../../../../core/storage/token_storage.dart';
 import 'package:star_drive/features/auth/data/model/login_request_model.dart';
 import 'package:star_drive/features/auth/data/model/otp_request_model.dart';
 import 'package:star_drive/features/auth/data/model/otp_response_model.dart';
@@ -14,7 +13,6 @@ import 'package:star_drive/features/auth/data/model/auth_response_model.dart';
 import 'package:star_drive/features/auth/data/model/reset_password_model.dart';
 import 'package:star_drive/features/auth/data/model/reset_response_model.dart';
 import 'package:star_drive/features/auth/data/model/verify_request_model.dart';
-import 'package:star_drive/features/auth/domain/enums/otp_purpose.dart';
 
 import '../../../../../core/network/dio_client.dart';
 

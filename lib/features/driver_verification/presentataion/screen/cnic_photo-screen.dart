@@ -11,7 +11,6 @@ import 'package:star_drive/features/driver_verification/presentataion/screen/vec
 import 'package:star_drive/features/driver_verification/presentataion/screen/vechile_picture_screen.dart';
 import 'package:star_drive/features/driver_verification/presentataion/screen/widgets/document_slot_row.dart';
 import 'package:star_drive/features/driver_verification/presentataion/screen/widgets/verification_section_header.dart';
-import 'package:star_drive/features/driver_verification/presentataion/screen/widgets/verification_tips_card.dart';
 
 class CnicVerificationScreen extends StatefulWidget {
   const CnicVerificationScreen({

@@ -32,8 +32,7 @@ Future<Either<Failure, RideEstimateEntity>> getRideEstimate(
 
     return Right(response);
   } catch (error) {
-    
-    rethrow;
-  }
+  return Left(ErrorMapper.map(error));
+}
 }
 }

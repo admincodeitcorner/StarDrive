@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
@@ -13,8 +12,11 @@ import 'package:star_drive/features/auth/presentation/bloc/register/register_blo
 import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_password_bloc.dart';
 
 import 'package:star_drive/features/become_driver/presentation/bloc/becomeDriverBloc/become_driver_bloc.dart';
+import 'package:star_drive/features/driver/presentation/bloc/driver_availablity/driver_availability_bloc.dart';
+import 'package:star_drive/features/driver/presentation/screen/driver_screen.dart';
 
 import 'package:star_drive/features/driver_verification/presentataion/bloc/driver_verification_bloc/driver_verification_bloc.dart';
+import 'features/auth/presentation/screens/role_selection_screen.dart';
 import 'features/driver_verification/presentataion/bloc/vechile_details_bloc/vechile_details_bloc_bloc.dart';
 
 import 'package:star_drive/features/map/presentation/screen/map_screen.dart';
@@ -56,15 +58,9 @@ class StarDriveApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<AuthBloc>(
-          create: (_) => sl<AuthBloc>(),
-        ),
-        BlocProvider<ResetPasswordBloc>(
-          create: (_) => sl<ResetPasswordBloc>(),
-        ),
-        BlocProvider<LoginBloc>(
-          create: (_) => sl<LoginBloc>(),
-        ),
+        BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
+        BlocProvider<ResetPasswordBloc>(create: (_) => sl<ResetPasswordBloc>()),
+        BlocProvider<LoginBloc>(create: (_) => sl<LoginBloc>()),
         BlocProvider<DriverVerificationBloc>(
           create: (_) => sl<DriverVerificationBloc>(),
         ),
@@ -72,18 +68,13 @@ class StarDriveApp extends StatelessWidget {
           create: (_) => sl<VehicleDetailsBloc>(),
         ),
         BlocProvider<MapBloc>(
-          create: (_) => sl<MapBloc>()
-            ..add(const InitializeMapEvent()),
+          create: (_) => sl<MapBloc>()..add(const InitializeMapEvent()),
         ),
-        BlocProvider<BecomeDriverBloc>(
-          create: (_) => sl<BecomeDriverBloc>(),
-        ),
-        BlocProvider<RideEstimateBloc>(
-          create: (_) => sl<RideEstimateBloc>(),
-        ),
-        BlocProvider<ThemeBloc>(
-          create: (_) => sl<ThemeBloc>(),
-        ),
+        BlocProvider<BecomeDriverBloc>(create: (_) => sl<BecomeDriverBloc>()),
+        BlocProvider<RideEstimateBloc>(create: (_) => sl<RideEstimateBloc>()),
+        BlocProvider<ThemeBloc>(create: (_) => sl<ThemeBloc>()),
+        BlocProvider<DriverAvailabilityBloc>(create: (_) => sl<DriverAvailabilityBloc>()),
+        
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {
@@ -98,7 +89,7 @@ class StarDriveApp extends StatelessWidget {
                 theme: AppTheme.lightTheme,
                 darkTheme: AppTheme.darkTheme,
                 themeMode: state.mode,
-                home: SplashScreen(),
+                home: RoleSelectionScreen(),
               );
             },
           );

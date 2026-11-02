@@ -9,6 +9,8 @@ import 'package:star_drive/features/driver_verification/domain/entities/document
 import 'package:star_drive/features/driver_verification/domain/entities/vechile_detail_submission.dart';
 import 'package:star_drive/features/driver_verification/presentataion/bloc/vechile_details_bloc/vechile_details_bloc_bloc.dart';
 
+import '../../../driver/presentation/screen/driver_screen.dart';
+
 // ignore: must_be_immutable
 class VechilePictureScreen extends StatefulWidget {
   VechilePictureScreen({
@@ -182,16 +184,54 @@ class _VechilePictureScreenState extends State<VechilePictureScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<VehicleDetailsBloc, VechileDetailsBlocState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is VechileDetailsBlocSuccess) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
-
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const HomeScreen()),
-            (route) => false,
+          await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            icon: const Icon(
+              Icons.hourglass_top_rounded,
+              color: Colors.orange,
+              size: 48,
+            ),
+            title: const Text(
+              'Approval Pending',
+              textAlign: TextAlign.center,
+            ),
+            content: Text(
+              state.message,
+              textAlign: TextAlign.center,
+            ),
+            actions: [
+              // SizedBox(
+              //   width: double.infinity,
+              //   child: ElevatedButton(
+              //     onPressed: () {
+              //       Navigator.of(dialogContext).pop();
+              //     },
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: AppColors.primary,
+              //       foregroundColor: Colors.white,
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(12),
+              //       ),
+              //     ),
+              //     child: const Text('OK'),
+              //   ),
+              // ),
+            ],
           );
+        },
+      );
+          // Navigator.of(context).pushAndRemoveUntil(
+          //   MaterialPageRoute(builder: (_) => const DriverScreen()),
+          //   (route) => false,
+          // );
         }
 
         if (state is VechileDetailsBlocFailure) {

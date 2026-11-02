@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:star_drive/core/error/exception.dart';
 
-import 'package:dio/dio.dart';
 
 class ApiErrorHandler {
   ApiErrorHandler._();

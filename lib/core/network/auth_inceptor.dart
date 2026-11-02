@@ -47,7 +47,7 @@ class AuthInterceptor extends Interceptor {
       final hasToken = token != null && token.trim().isNotEmpty;
 
       if (hasToken) {
-        options.headers['Authorization'] = 'Bearer ${token!.trim()}';
+        options.headers['Authorization'] = 'Bearer ${token.trim()}';
       } else {
         options.headers.remove('Authorization');
       }

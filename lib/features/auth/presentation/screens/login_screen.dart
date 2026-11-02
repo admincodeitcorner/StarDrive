@@ -17,6 +17,7 @@ import 'package:star_drive/features/auth/presentation/widgets/custom_divider.dar
 import 'package:star_drive/features/auth/presentation/widgets/custom_phone_field.dart';
 import 'package:star_drive/features/dashboard/presentation/screens/home.screen.dart';
 
+import '../../../driver/presentation/screen/driver_screen.dart';
 import '../widgets/password_text_field.dart';
 import '../widgets/social_button.dart';
 
@@ -45,26 +46,101 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _onLoginState(BuildContext context, LoginState state) async {
-    final messenger = ScaffoldMessenger.of(context);
+Future<void> _onLoginState(
+  BuildContext context,
+  LoginState state,
+) async {
+  if (state is LoginSuccess) {
+    final user = state.user;
+    final role = user.role.toLowerCase();
 
-    if (state is LoginSuccess) {
-      messenger.showSnackBar(
-        SnackBar(content: Text('Welcome ${state.user.name}!')),
+    debugPrint('LOGIN ROLE: ${user.role}');
+    debugPrint('LOGIN APPROVED: ${user.isApproved}');
+
+    if (role == 'driver' && user.isApproved == false) {
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            icon: const Icon(
+              Icons.hourglass_top_rounded,
+              color: Colors.orange,
+              size: 48,
+            ),
+            title: const Text(
+              'Driver Approval Pending',
+              textAlign: TextAlign.center,
+            ),
+            content: const Text(
+              'Your driver account is pending for admin approval. '
+              'Please wait until your documents and vehicle details '
+              'are verified.',
+              textAlign: TextAlign.center,
+            ),
+            actions: [
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ),
+            ],
+          );
+        },
       );
+
+      
+      return;
+    }
+
+    if (role == 'driver' && user.isApproved == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Welcome ${user.name}!')),
+      );
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (_) => DriverScreen(),
+        ),
+        (route) => false,
+      );
+
+      return;
+    }
+
+    if (role == 'passenger') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Welcome ${user.name}!')),
+      );
+
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (_) => HomeScreen(),
         ),
         (route) => false,
       );
-    }
 
-    if (state is LoginFailure) {
-      messenger.showSnackBar(SnackBar(content: Text(state.message)));
+      return;
     }
   }
 
+  if (state is LoginFailure) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(state.message)),
+    );
+  }
+}
   void _push(Widget screen) {
     Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
   }

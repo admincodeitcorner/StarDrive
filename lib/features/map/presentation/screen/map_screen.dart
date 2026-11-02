@@ -41,7 +41,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   bool _routeAvailable = false;
   String _pickupName = 'Current location';
   String _destinationName = '';
-  int _estimatedMinutes = 0;
+
   LatLng? _selectedDestination;
 
   final Geocoding geocoding = Geocoding();
@@ -274,9 +274,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       if (routePoints.isEmpty) return;
 
       await controller.clearLines();
-      await controller
-          .clearSymbols(); // purana destination marker hatane ke liye
-
+      await controller.clearSymbols();
       await controller.addLine(
         LineOptions(
           geometry: routePoints,
@@ -318,6 +316,35 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> _resetMapScreen() async {
+    setState(() {
+      _routeAvailable = false;
+      _selectedDestination = null;
+      _destinationName = '';
+    });
+
+    _controller?.clearLines();
+    _controller?.clearSymbols();
+
+    if (_controller != null) {
+      final state = context.read<MapBloc>().state;
+
+      if (state is MapLocationSuccess) {
+        final location = LatLng(
+          state.position.latitude,
+          state.position.longitude,
+        );
+
+        await _controller!.animateCamera(
+          CameraUpdate.newLatLngZoom(location, 16),
+        );
+
+        _markerAdded = false;
+        await _addUserMarker(state.position);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -346,6 +373,12 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                 if (state is RideEstimateSuccess) {
                   drawRouteFromEstimate(state.estimate);
                 }
+                if (state is RideEstimateFailure) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
+                  debugPrint(state.message);
+                }
               },
               child: Stack(
                 children: [
@@ -362,8 +395,8 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
                   SearchDestinationWidget(
                     position: position,
-                    onDestinationSelected: (destination)async  {
-                        if (!mounted) return;
+                    onDestinationSelected: (destination) async {
+                      if (!mounted) return;
                       setState(() {
                         _selectedDestination = destination.coordinates;
                         _destinationName = destination.name;
@@ -373,8 +406,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                       context.read<RideEstimateBloc>().add(
                         RideEstimateRequested(
                           RideEstimateRequestEntity(
-                            vehicleType:
-                                'car', 
+                            vehicleType: 'car',
                             pickup: RideEstimateLocationEntity(
                               lat: position.latitude,
                               lon: position.longitude,
@@ -412,6 +444,13 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                         );
                       },
                     ),
+                    if (_routeAvailable)
+                  IconButton(
+                    onPressed: () async {
+                      await _resetMapScreen();
+                    },
+                    icon: const Icon(Icons.arrow_back),
+                  ),
                 ],
               ),
             );
