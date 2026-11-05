@@ -30,8 +30,8 @@ import 'package:star_drive/features/auth/domain/usecase/verified_otp_usecase.dar
 import 'package:star_drive/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:star_drive/features/auth/presentation/bloc/register/register_bloc.dart';
 import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_password_bloc.dart';
-import 'package:star_drive/features/map/data/repository/map_repository_impl.dart';
-import 'package:star_drive/features/map/map_import.dart';
+import 'package:star_drive/features/passenger/data/repository/map_repository_impl.dart';
+import 'package:star_drive/features/passenger/map_import.dart';
 import '../../features/auth/data/dataresource/local/auth_local_data_storage.dart';
 import '../../features/auth/data/dataresource/remote/auth_remote_datasource.dart';
 import '../../features/auth/domain/usecase/logout_usecase.dart';
@@ -47,14 +47,16 @@ import '../../features/become_driver/domain/usecase/onboard_usecase.dart';
 import '../../features/become_driver/presentation/bloc/becomeDriverBloc/become_driver_bloc.dart';
 import '../../features/become_driver/presentation/bloc/onboard_status_bloc/onboard_status_bloc_bloc.dart';
 
-import '../../features/map/data/datasource/ride_estimate_datasource.dart';
-import '../../features/map/data/repository/ride_estimate_repository_impl.dart';
-import '../../features/map/domain/repository/ride_estimate_repository.dart' show RideEstimateRepository;
-import '../../features/map/domain/usecase/ride_estimate_usecase.dart';
+import '../../features/driver/presentation/ride_request_import.dart';
+import '../../features/passenger/data/datasource/ride_estimate_datasource.dart';
+import '../../features/passenger/data/repository/ride_estimate_repository_impl.dart';
+import '../../features/passenger/domain/repository/ride_estimate_repository.dart' show RideEstimateRepository;
+import '../../features/passenger/domain/usecase/ride_estimate_usecase.dart';
 
-import '../../features/map/presentation/bloc/ride_estimate/ride_estimate_bloc.dart';
+import '../../features/passenger/presentation/bloc/ride_estimate/ride_estimate_bloc.dart';
+import '../../features/passenger/presentation/ride_request_import.dart';
 import '../network/dio_client.dart';
-import 'package:star_drive/features/map/data/datasource/location_data_source.dart';
+import 'package:star_drive/features/passenger/data/datasource/location_data_source.dart';
 import 'package:star_drive/features/driver_verification/data/datasource/driver_documents_remote_datasource.dart';
 import 'package:star_drive/features/driver_verification/data/datasource/vechile_detail_remote_datasource.dart';
 import 'package:star_drive/features/driver_verification/data/repositories/driver_documents_repostories_impl.dart';
@@ -66,6 +68,8 @@ import 'package:star_drive/features/driver_verification/domain/usecase/vechile_d
 import 'package:star_drive/features/driver_verification/presentataion/bloc/driver_verification_bloc/driver_verification_bloc.dart';
 import 'package:star_drive/features/driver_verification/presentataion/bloc/vechile_details_bloc/vechile_details_bloc_bloc.dart';
 
+import '../../features/driver/data/datasource/signalr/driver_ride_listener.dart';
+import '../signalr/passenger_ride_offer.dart';
 import '../signalr/signalr_service.dart';
 import '../storage/token_storage.dart';
 import '../../features/driver/presentation/driver_import.dart';
@@ -412,5 +416,94 @@ sl.registerLazySingleton<DriverLocationSender>(
     dioClient: sl<DioClient>(),
   ),
 );
+// Passenger Ride Listener
+sl.registerLazySingleton<PassengerRideListener>(
+  () => PassengerRideListener(
+    signalRService: sl<SignalRService>(),
+  ),
+);
+sl.registerLazySingleton<DriverRideListener>(
+  () => DriverRideListener(
+    signalRService: sl<SignalRService>(),
+  ),
+);
+// Passenger Ride Request Dependencies
+sl.registerLazySingleton<RideRequestRemoteDataSource>(
+  () => RideRequestRemoteDataSourceImpl(
+    apiClient: sl<DioClient>(),
+  ),
+);
+sl.registerLazySingleton<RideRequestRepository>(
+  () => RideRequestRepositoryImpl(
+    remoteDataSource: sl<RideRequestRemoteDataSource>(),
+  ),
+);
 
+sl.registerLazySingleton<RideRequestUseCase>(
+  () => RideRequestUseCase(
+    repository: sl<RideRequestRepository>(),
+  ),
+);
+
+
+sl.registerFactory<RideRequestBloc>(
+  () => RideRequestBloc(
+    rideRequestUseCase: sl<RideRequestUseCase>(),
+  ),
+);
+
+// Incoming Ride Dependencies
+// ===============================
+
+
+
+// Repository
+sl.registerLazySingleton<IncomingRideRepository>(
+  () => IncomingRideRepositoryImpl(
+    driverRideListener: sl<DriverRideListener>(),
+  ),
+);
+
+// UseCase
+sl.registerLazySingleton<ListenIncomingRidesUseCase>(
+  () => ListenIncomingRidesUseCase(
+    repository: sl<IncomingRideRepository>(),
+  ),
+);
+
+// BLoC
+sl.registerFactory<IncomingRideBloc>(
+  () => IncomingRideBloc(
+    listenIncomingRidesUseCase:
+        sl<ListenIncomingRidesUseCase>(),
+  ),
+);
+//send offer dependencies
+// DataSource
+sl.registerLazySingleton<SendOfferSignalRDataSource>(
+  () => SendOfferSignalRDataSourceImpl(
+    signalRService: sl<SignalRService>(),
+  ),
+);
+
+// Repository
+sl.registerLazySingleton<SendOfferRepository>(
+  () => SendOfferRepositoryImpl(
+    remoteDataSource: sl<SendOfferSignalRDataSource>(),
+  ),
+);
+
+// UseCase
+sl.registerLazySingleton(
+  () => SendOfferUseCase(
+    repository: sl<SendOfferRepository>(),
+  ),
+);
+
+// BLoC
+sl.registerFactory(
+  () => SendOfferBloc(
+    sendOfferUseCase: sl<SendOfferUseCase>(),
+  ),
+);
 }

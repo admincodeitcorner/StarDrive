@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:star_drive/features/map/presentation/screen/map_screen.dart';
 
+
+import '../../../passenger/presentation/screen/passenger_screen.dart';
 import 'widgets/drawer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: DrawerScreen(),
       appBar: AppBar(title: Text('Welcome to StarRide')),
-      body: const MapScreen(),
+      body: const PassengerScreen(),
       
     );
   }

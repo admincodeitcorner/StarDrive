@@ -1,7 +1,7 @@
  import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../map/map_import.dart';
+import '../../../passenger/map_import.dart';
 
 
 

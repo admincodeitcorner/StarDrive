@@ -3,8 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:logging/logging.dart';
+import 'package:star_drive/features/driver/data/datasource/signalr/driver_ride_listener.dart' show DriverRideListener;
+import '../../../passenger/presentation/screen/widgets/map_render_screen.dart';
+import '../bloc/incoming_ride/incoming_ride_bloc.dart';
 import '../driver_import.dart';
-import '../../../map/map_import.dart';
+import '../../../passenger/map_import.dart';
 
 import '../../../../core/di/injector.dart';
 import '../../../../core/signalr/location_sender.dart';
@@ -14,6 +18,7 @@ import '../../../widgets/permisson_dialog.dart';
 import '../../../widgets/show_permanent_denial_dialog.dart';
 import '../../../widgets/location_service_dialog.dart';
 
+import 'request_for_ride_screen.dart';
 import 'widgets/custom_navigation_bar.dart';
 import 'widgets/custom_toggle_button.dart';
 
@@ -32,17 +37,26 @@ class _DriverScreenState extends State<DriverScreen>
   // bool _dialogShowing = false;
   bool _isProcessing = false;
   int? _loadingIndex;
-  StreamSubscription<Position>? _locationSubscription;
+Timer? _locationTimer;
 
   bool _isStartingLocationTracking = false;
   bool _isSendingLocation = false;
   final List<Widget> _screens = const [
-    Center(child: Text('Ride Request')),
-    Center(child: Text('Demand')),
+           RequestForRideScreen(),
+       Center(child: Text('Demand')),
     Center(child: Text('Performance')),
     Center(child: Text('Wallet')),
   ];
+  LocationSettings locationSettingsHigh = const LocationSettings(
+    accuracy: LocationAccuracy.high,
+    
+  );
+  LocationSettings locationSettingsMedium = const LocationSettings(
+    accuracy: LocationAccuracy.medium,
+  );
 
+  final Logger _logger = Logger('DriverScreen');
+ 
   @override
   void initState() {
     super.initState();
@@ -51,22 +65,16 @@ class _DriverScreenState extends State<DriverScreen>
 
     // Only fetch the current location here.
     context.read<MapBloc>().add(const InitializeMapEvent());
+
+
   }
 
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-
-    final subscription = _locationSubscription;
-    _locationSubscription = null;
-
-    if (subscription != null) {
-      unawaited(subscription.cancel());
-    }
-
-    super.dispose();
-  }
-
+@override
+void dispose() {
+  WidgetsBinding.instance.removeObserver(this);
+  _locationTimer?.cancel();
+  super.dispose();
+}
   // Re-check the location when the user returns from the settings screen.
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -93,54 +101,60 @@ class _DriverScreenState extends State<DriverScreen>
     }
   }
 
-  void _driverAvailabilityState(
-    BuildContext context,
-    DriverAvailabilityState driverAvailabilityState,
-  )  {
-    if (!driverAvailabilityState.isLoading && _isProcessing) {
-      setState(() {
-        _isProcessing = false;
-        _loadingIndex = null;
-      });
-    }
-    // Start or stop GPS tracking only after the
-    // availability request succeeds.
-    if (!driverAvailabilityState.isLoading &&
-        driverAvailabilityState.messageType ==
-            AvailabilityMessageType.success) {
-      if (driverAvailabilityState.isOnline) {
-        unawaited(_startLocationTracking());
-      } else {
-        unawaited(_stopLocationTracking());
-      }
-    }
-    if (driverAvailabilityState.message != null &&
-        driverAvailabilityState.messageType != AvailabilityMessageType.none) {
-      final isSuccess =
-          driverAvailabilityState.messageType ==
-          AvailabilityMessageType.success;
+  Future<void> _driverAvailabilityState(
+  BuildContext context,
+  DriverAvailabilityState driverAvailabilityState,
+) async {
+  if (!driverAvailabilityState.isLoading && _isProcessing) {
+    setState(() {
+      _isProcessing = false;
+      _loadingIndex = null;
+    });
+  }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(driverAvailabilityState.message!),
-          backgroundColor: isSuccess ? Colors.green : Colors.red,
-        ),
-      );
+  // Start or stop services only after availability API succeeds.
+  if (!driverAvailabilityState.isLoading &&
+      driverAvailabilityState.messageType ==
+          AvailabilityMessageType.success) {
+    if (driverAvailabilityState.isOnline) {
+       context
+        .read<IncomingRideBloc>()
+        .add(StartIncomingRideListener());
+
+      await _startDriverRideListener();
+
+      unawaited(_startLocationTracking());
+    } else {
+      unawaited(_stopLocationTracking());
     }
   }
-Future<void> _handleAvailabilityToggle(int index) async {
-    if (!mounted || _isProcessing) return;
 
+  if (driverAvailabilityState.message != null &&
+      driverAvailabilityState.messageType !=
+          AvailabilityMessageType.none) {
+    final isSuccess =
+        driverAvailabilityState.messageType ==
+            AvailabilityMessageType.success;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(driverAvailabilityState.message!),
+        backgroundColor: isSuccess ? Colors.green : Colors.red,
+      ),
+    );
+  }
+}
+  Future<void> _handleAvailabilityToggle(int index) async {
     final mapBloc = context.read<MapBloc>();
     final availabilityBloc = context.read<DriverAvailabilityBloc>();
     final currentState = availabilityBloc.state;
 
-    // Prevent another request while the BLoC is already processing one.
-    if (currentState.isLoading) return;
-
+    // Prevent another request while the BLoC is already processing one or prevent multiple user tap.
+    if (!mounted || _isProcessing || currentState.isLoading) return;
+    final wantsOnline = index == 1;
     // Ignore taps on the already-selected option.
-    if ((index == 1 && currentState.isOnline) ||
-        (index == 0 && !currentState.isOnline)) {
+    if ((wantsOnline && currentState.isOnline) ||
+        (!wantsOnline && !currentState.isOnline)) {
       return;
     }
 
@@ -154,8 +168,7 @@ Future<void> _handleAvailabilityToggle(int index) async {
 
     try {
       // 1. Check whether the device location service is enabled.
-      final serviceEnabled =
-          await Geolocator.isLocationServiceEnabled();
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!mounted) return;
 
       if (!serviceEnabled) {
@@ -186,29 +199,23 @@ Future<void> _handleAvailabilityToggle(int index) async {
       if (position == null && mapBloc.state is MapLocationSuccess) {
         position = (mapBloc.state as MapLocationSuccess).position;
       }
-
       // Get a fresh position only when no cached position is available.
-      if (position == null) {
+      else if (position == null) {
         try {
+          // First attempt: High accuracy.
           position = await Geolocator.getCurrentPosition(
-            locationSettings: const LocationSettings(
-              accuracy: LocationAccuracy.medium,
-              timeLimit: Duration(seconds: 5),
-            ),
+            locationSettings: locationSettingsHigh,
           );
         } catch (_) {
           if (!mounted) return;
 
-          // Retry once with lower accuracy for a quicker fix.
+          // Second attempt: Medium accuracy.
           try {
             position = await Geolocator.getCurrentPosition(
-              locationSettings: const LocationSettings(
-                accuracy: LocationAccuracy.low,
-                timeLimit: Duration(seconds: 4),
-              ),
+              locationSettings: locationSettingsMedium,
             );
           } catch (_) {
-            // The null-position handling below displays the error.
+            // Handle null position below.
           }
         }
       }
@@ -218,9 +225,7 @@ Future<void> _handleAvailabilityToggle(int index) async {
       if (position == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-              'Current location nahi mil saki. GPS check karein.',
-            ),
+            content: Text('Current location nahi mil saki. GPS check karein.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -230,29 +235,25 @@ Future<void> _handleAvailabilityToggle(int index) async {
 
       // 4. Dispatch the API request. The BLoC's isLoading state takes over
       // the busy indicator; the local flag is cleared by the listener.
+      index == 1
+          ? availabilityBloc.add(
+              SetDriverOnlineRequested(
+                lat: position.latitude,
+                lon: position.longitude,
+              ),
+            )
+          : availabilityBloc.add(
+              SetDriverOfflineRequested(
+                lat: position.latitude,
+                lon: position.longitude,
+              ),
+            );
+
       dispatched = true;
-      if (index == 1) {
-        availabilityBloc.add(
-          SetDriverOnlineRequested(
-            lat: position.latitude,
-            lon: position.longitude,
-          ),
-        );
-      } else {
-        availabilityBloc.add(
-          SetDriverOfflineRequested(
-            lat: position.latitude,
-            lon: position.longitude,
-          ),
-        );
-      }
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $error'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Error: $error'), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -266,111 +267,60 @@ Future<void> _handleAvailabilityToggle(int index) async {
       }
     }
   }
+ Future<void> _startDriverRideListener() async {
+  try {
+    await sl<DriverRideListener>().start();
+
+    _logger.info('Driver is listening for new ride requests');
+  } catch (error, stackTrace) {
+    _logger.severe(
+      'Driver ride listener failed',
+      error,
+      stackTrace,
+    );
+  }
+}
   Future<void> _startLocationTracking() async {
-    if (_locationSubscription != null || _isStartingLocationTracking) {
-      return;
-    }
+  if (_locationTimer != null) return;
 
-    _isStartingLocationTracking = true;
+  // First location send, then after 15 seconds
+  unawaited(_sendDriverLocation());
+  _locationTimer = Timer.periodic(
+    const Duration(seconds: 15),
+    (_) => _sendDriverLocation(),
+  );
+}
 
-    try {
-      debugPrint('LOCATION: Starting SignalR connection...');
+Future<void> _sendDriverLocation() async {
+  if (_isSendingLocation) return;
+  _isSendingLocation = true;
 
-      try {
-        await sl<SignalRService>().connect();
-        debugPrint(
-          'SIGNALR: Connected = '
-          '${sl<SignalRService>().isConnected}',
-        );
-      } catch (error, stackTrace) {
-        debugPrint('SIGNALR CONNECT FAILED: $error');
-        debugPrintStack(stackTrace: stackTrace);
-      }
+  try {
+    final position = await Geolocator.getCurrentPosition(
+      locationSettings: locationSettingsHigh,
+    );
 
-      if (!mounted) return;
-
-      // Start listening for subsequent GPS updates.
-      _locationSubscription =
-          Geolocator.getPositionStream(
-            locationSettings: const LocationSettings(
-              accuracy: LocationAccuracy.high,
-              distanceFilter: 10,
-            ),
-          ).listen(
-            (position) {
-              debugPrint(
-                'GPS UPDATE: '
-                '${position.latitude}, ${position.longitude}',
-              );
-
-              unawaited(_sendDriverLocation(position));
-            },
-            onError: (Object error) {
-              debugPrint('GPS STREAM ERROR: $error');
-            },
-          );
-
-      // Send an initial location immediately.
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.medium,
-          timeLimit: Duration(seconds: 10),
-        ),
-      );
-
-      debugPrint('INITIAL GPS: ${position.latitude}, ${position.longitude}');
-
-      await _sendDriverLocation(position);
-    } catch (error, stackTrace) {
-      debugPrint('LOCATION TRACKING ERROR: $error');
-      debugPrintStack(stackTrace: stackTrace);
-    } finally {
-      _isStartingLocationTracking = false;
-    }
+    await sl<DriverLocationSender>().sendLocation(
+      lat: position.latitude,
+      lon: position.longitude,
+    );
+  } catch (error) {
+    debugPrint('LOCATION SEND FAILED: $error');
+  } finally {
+    _isSendingLocation = false;
   }
+}
 
-  Future<void> _sendDriverLocation(Position position) async {
-    if (_isSendingLocation) {
-      debugPrint('LOCATION: Previous request still running');
-      return;
-    }
+Future<void> _stopLocationTracking() async {
+  _locationTimer?.cancel();
+  _locationTimer = null;
 
-    _isSendingLocation = true;
-
-    try {
-      debugPrint(
-        'LOCATION SENDING: '
-        '${position.latitude}, ${position.longitude}',
-      );
-
-      await sl<DriverLocationSender>().sendLocation(
-        lat: position.latitude,
-        lon: position.longitude,
-      );
-
-      debugPrint('LOCATION SENT SUCCESSFULLY');
-    } catch (error, stackTrace) {
-      debugPrint('LOCATION SEND FAILED: $error');
-      debugPrintStack(stackTrace: stackTrace);
-    } finally {
-      _isSendingLocation = false;
-    }
+  try {
+    await sl<SignalRService>().disconnect();
+  } catch (error) {
+    debugPrint('SignalR disconnect failed: $error');
   }
-
-  Future<void> _stopLocationTracking() async {
-    final subscription = _locationSubscription;
-    _locationSubscription = null;
-
-    await subscription?.cancel();
-
-    try {
-      await sl<SignalRService>().disconnect();
-    } catch (error) {
-      debugPrint('SignalR disconnect failed: $error');
-    }
-  }
-
-  @override
+}  @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
@@ -390,7 +340,7 @@ Future<void> _handleAvailabilityToggle(int index) async {
               final isOnline = availability.isOnline;
               final isBusy = _isProcessing || availability.isLoading;
 
-            return CustomToggleButton(
+              return CustomToggleButton(
                 isOnline: isOnline,
                 isBusy: isBusy,
                 loadingIndex: _loadingIndex,
@@ -412,4 +362,3 @@ Future<void> _handleAvailabilityToggle(int index) async {
     );
   }
 }
-

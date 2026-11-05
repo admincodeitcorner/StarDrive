@@ -43,7 +43,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
 
     if (message.contains('SocketException')) {
-      return 'Internet connection check karein.';
+      return 'Please check your internet connection.';
     }
 
     return message.replaceFirst('Exception: ', '');

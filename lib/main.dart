@@ -13,19 +13,20 @@ import 'package:star_drive/features/auth/presentation/bloc/reset_password/reset_
 
 import 'package:star_drive/features/become_driver/presentation/bloc/becomeDriverBloc/become_driver_bloc.dart';
 import 'package:star_drive/features/driver/presentation/bloc/driver_availablity/driver_availability_bloc.dart';
-import 'package:star_drive/features/driver/presentation/screen/driver_screen.dart';
+import 'package:star_drive/features/driver/presentation/driver_import.dart'
+    show SendOfferBloc;
 
 import 'package:star_drive/features/driver_verification/presentataion/bloc/driver_verification_bloc/driver_verification_bloc.dart';
+import 'package:star_drive/features/passenger/presentation/bloc/ride_request/ride_request_bloc.dart';
+import 'core/utils/logging.dart';
 import 'features/auth/presentation/screens/role_selection_screen.dart';
+import 'features/driver/presentation/bloc/incoming_ride/incoming_ride_bloc.dart';
 import 'features/driver_verification/presentataion/bloc/vechile_details_bloc/vechile_details_bloc_bloc.dart';
 
-import 'package:star_drive/features/map/presentation/screen/map_screen.dart';
-
 import 'features/auth/data/dataresource/local/auth_local_data_storage.dart';
-import 'features/map/map_import.dart';
-import 'features/map/presentation/bloc/ride_estimate/ride_estimate_bloc.dart';
+import 'features/passenger/map_import.dart';
+import 'features/passenger/presentation/bloc/ride_estimate/ride_estimate_bloc.dart';
 
-import 'features/splash_screen/splashScreen.dart';
 import 'features/theme/presentation/bloc/theme_bloc.dart';
 import 'features/theme/presentation/bloc/theme_state.dart';
 
@@ -46,8 +47,10 @@ Future<void> main() async {
 
   // 5. Setup BLoC observer.
   Bloc.observer = AppBlocObserver();
+  //setup logging
+  setupLogging();
 
-  // 6. Run application.
+  // . Run application.
   runApp(const StarDriveApp());
 }
 
@@ -73,8 +76,12 @@ class StarDriveApp extends StatelessWidget {
         BlocProvider<BecomeDriverBloc>(create: (_) => sl<BecomeDriverBloc>()),
         BlocProvider<RideEstimateBloc>(create: (_) => sl<RideEstimateBloc>()),
         BlocProvider<ThemeBloc>(create: (_) => sl<ThemeBloc>()),
-        BlocProvider<DriverAvailabilityBloc>(create: (_) => sl<DriverAvailabilityBloc>()),
-        
+        BlocProvider<DriverAvailabilityBloc>(
+          create: (_) => sl<DriverAvailabilityBloc>(),
+        ),
+        BlocProvider<RideRequestBloc>(create: (_) => sl<RideRequestBloc>()),
+        BlocProvider<IncomingRideBloc>(create: (_) => sl<IncomingRideBloc>()),
+        BlocProvider(create: (context) => sl<SendOfferBloc>()),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {

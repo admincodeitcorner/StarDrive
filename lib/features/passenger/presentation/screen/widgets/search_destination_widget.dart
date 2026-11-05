@@ -1,0 +1,118 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
+import 'package:star_drive/features/passenger/presentation/screen/widgets/route_search_bottom_sheet.dart';
+
+import '../../bloc/ride_estimate/ride_estimate_bloc.dart';
+
+class SearchDestinationWidget extends StatelessWidget {
+  SearchDestinationWidget({
+    super.key,
+    required this.position,
+    required this.onDestinationSelected,
+  });
+
+  final Position position;
+  final Future<void> Function(StaticDestination destination)
+  onDestinationSelected;
+
+  final Geocoding geocoding = Geocoding();
+
+  Future<String> _getPickupAddress(Position position) async {
+    try {
+      final placemarks = await geocoding.placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isEmpty) {
+        return 'Current location';
+      }
+
+      final place = placemarks.first;
+
+      final parts =
+          [
+                place.name,
+                place.subLocality,
+                place.locality,
+                place.administrativeArea,
+              ]
+              .whereType<String>()
+              .map((value) => value.trim())
+              .where((value) => value.isNotEmpty)
+              .toSet()
+              .toList();
+
+      return parts.isEmpty ? 'Current location' : parts.join(', ');
+    } catch (e, stackTrace) {
+      debugPrint('Reverse geocoding failed: $e');
+      debugPrintStack(stackTrace: stackTrace);
+
+      return 'Current location';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: 16,
+      right: 16,
+      bottom: 24,
+      child: SafeArea(
+        child: Material(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          elevation: 6,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(18),
+            onTap: () async {
+              final pickupAddress = await _getPickupAddress(position);
+
+              if (!context.mounted) return;
+
+              final estimateBloc = context.read<RideEstimateBloc>();
+
+              final destination = await Navigator.push<StaticDestination>(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: estimateBloc,
+                    child: RouteSearchBottomSheet(
+                      pickup: LatLng(position.latitude, position.longitude),
+                      pickupAddress: pickupAddress,
+                    ),
+                  ),
+                ),
+              );
+
+              if (!context.mounted || destination == null) return;
+
+              await onDestinationSelected(destination);
+            },
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 22),
+              child: Row(
+                children: [
+                  Icon(Icons.search, size: 30),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      'Where to & for how much?',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
