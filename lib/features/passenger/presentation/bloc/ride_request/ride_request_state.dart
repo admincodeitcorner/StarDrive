@@ -32,3 +32,22 @@ final class RideRequestFailure extends RideRequestState {
   @override
   List<Object?> get props => [message];
 }
+
+final class RideRequestCancelling extends RideRequestState {
+  const RideRequestCancelling();
+}
+
+final class RideRequestCancelSuccess extends RideRequestState {
+  const RideRequestCancelSuccess();
+}
+
+final class RideRequestCancelFailure extends RideRequestState {
+  final String message;
+
+  const RideRequestCancelFailure({
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [message];
+}

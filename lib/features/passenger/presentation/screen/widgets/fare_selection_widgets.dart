@@ -212,12 +212,14 @@ class _FareContentState extends State<_FareContent> {
                     if (state is RideRequestSuccess) {
                       final view = state.rideRequest.driversNotified;
                       final requestTime = state.rideRequest.expiresInSeconds;
+                      final requestId = state.rideRequest.requestId;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => PassengerRideRequestScreen(
                             driverView: view,
                             requestTime: requestTime,
+                            requestId:requestId,
                           ),
                         ),
                       ).then((_) {

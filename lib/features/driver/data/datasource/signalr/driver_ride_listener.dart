@@ -49,14 +49,13 @@ class DriverRideListener {
           final data = arguments.first;
 
           if (data is Map) {
-            // Converts the incoming payload into a strongly typed map
-            // that can be consumed by the application data layer.
+            
             final rideData = Map<String, dynamic>.from(data);
 
             _logger.info('New ride request received');
 
             // Publishes the received ride request to all active stream
-            // subscribers, keeping SignalR handling separate from BLoC.
+            // subscribers.
             _rideController.add(rideData);
           } else {
             // Prevents unexpected payload types from entering the stream.

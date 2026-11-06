@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../domain/entities/ride_request_response_entity.dart';
 import '../../../domain/usecase/ride_request_usecase.dart';
+import '../../../domain/usecase/cancel_ride_request_usecase.dart';
 
 
 part 'ride_request_event.dart';
@@ -12,12 +13,15 @@ part 'ride_request_state.dart';
 class RideRequestBloc
     extends Bloc<RideRequestEvent, RideRequestState> {
   final RideRequestUseCase rideRequestUseCase;
+    final CancelRideRequestUseCase cancelRideRequestUseCase;
 
   RideRequestBloc({
     required this.rideRequestUseCase,
+     required this.cancelRideRequestUseCase,
   }) : super(RideRequestInitial()) {
     on<RideRequestSubmitted>(_onRideRequestSubmitted);
         on<RideRequestReset>(_onRideRequestReset);
+        on<RideRequestCancelled>(_onRideRequestCancelled);
 
   }
 
@@ -61,4 +65,39 @@ class RideRequestBloc
 
     debugPrint('RideRequestBloc: STATE IS INITIAL');
   }
+  // Handles cancellation of an active passenger ride request.
+  Future<void> _onRideRequestCancelled(
+    RideRequestCancelled event,
+    Emitter<RideRequestState> emit,
+  ) async {
+    if (state is RideRequestCancelling) return;
+
+    emit(const RideRequestCancelling());
+
+    final result = await cancelRideRequestUseCase(
+      requestId: event.requestId,
+    );
+
+    result.fold(
+      (failure) {
+        emit(
+          RideRequestCancelFailure(
+            message: failure.message,
+          ),
+        );
+      },
+      (isCancelled) {
+        if (isCancelled) {
+          emit(const RideRequestCancelSuccess());
+        } else {
+          emit(
+            const RideRequestCancelFailure(
+              message: 'Unable to cancel ride request',
+            ),
+          );
+        }
+      },
+    );
+  }
+
 }

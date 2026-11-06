@@ -13,7 +13,7 @@ import 'package:star_drive/features/passenger/presentation/screen/widgets/map_re
 import 'package:star_drive/features/passenger/presentation/screen/widgets/search_destination_widget.dart';
 
 import '../../../../core/di/injector.dart';
-import '../../../../core/signalr/passenger_ride_offer.dart';
+import '../../data/datasource/signalr/passenger_ride_offer.dart';
 import '../../../driver/presentation/screen/location_service_dialog.dart';
 import '../../../widgets/permisson_dialog.dart';
 import '../../../widgets/show_permanent_denial_dialog.dart';

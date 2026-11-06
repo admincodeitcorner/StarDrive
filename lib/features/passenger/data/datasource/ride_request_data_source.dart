@@ -10,10 +10,10 @@ import '../models/ride_request_response_model.dart';
 
 abstract interface class RideRequestRemoteDataSource {
   Future<Either<Exception, RideRequestResponseModel>> requestRide(
-
     String estimateId,
     int offerFare,
   );
+  Future<Either<Exception, bool>> cancelRideRequest(String requestId);
 }
 
 class RideRequestRemoteDataSourceImpl implements RideRequestRemoteDataSource {
@@ -29,10 +29,7 @@ class RideRequestRemoteDataSourceImpl implements RideRequestRemoteDataSource {
     try {
       final response = await apiClient.postApiResponse(
         ApiEndpoints.passengerRideRequest,
-        {
-          'estimateId': estimateId,
-          'offeredFare': offerFare,
-        },
+        {'estimateId': estimateId, 'offeredFare': offerFare},
       );
 
       final result = response.fold<Either<Exception, RideRequestResponseModel>>(
@@ -63,6 +60,44 @@ class RideRequestRemoteDataSourceImpl implements RideRequestRemoteDataSource {
       );
 
       return result;
+    } on DioException catch (e) {
+      return Left(ApiErrorHandler.handle(e));
+    } catch (e) {
+      return const Left(ServerException(message: 'Something went wrong'));
+    }
+  }
+
+  @override
+  Future<Either<Exception, bool>> cancelRideRequest(String requestId) async {
+    try {
+      final response = await apiClient.postApiResponse(
+        ApiEndpoints.passengerFindDriverCancel,
+        {'requestId': requestId},
+      );
+
+      return response.fold((exception) => Left(exception), (response) async {
+        try {
+          final responseData = await response.data;
+
+          if (responseData is! Map<String, dynamic>) {
+            return const Left(ParsingException());
+          }
+
+          if (responseData['code'] != '0000') {
+            return Left(
+              ServerException(
+                message:
+                    responseData['message']?.toString() ??
+                    'Ride cancellation failed',
+              ),
+            );
+          }
+
+          return const Right(true);
+        } catch (e) {
+          return const Left(ParsingException());
+        }
+      });
     } on DioException catch (e) {
       return Left(ApiErrorHandler.handle(e));
     } catch (e) {

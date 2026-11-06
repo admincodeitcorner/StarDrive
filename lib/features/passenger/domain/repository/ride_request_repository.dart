@@ -8,5 +8,5 @@ abstract interface class RideRequestRepository {
     required String estimateId,
     required int offerFare,
   });
-   
+  Future<Either<Failure, bool>> cancelRideRequest({required String requestId});
 }

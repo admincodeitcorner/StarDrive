@@ -17,6 +17,8 @@ import 'package:star_drive/features/driver/presentation/driver_import.dart'
     show SendOfferBloc;
 
 import 'package:star_drive/features/driver_verification/presentataion/bloc/driver_verification_bloc/driver_verification_bloc.dart';
+import 'package:star_drive/features/passenger/presentation/bloc/driver_offer_response/driver_offer_response_bloc.dart';
+import 'package:star_drive/features/passenger/presentation/bloc/passenger_ride/passenger_ride_bloc.dart';
 import 'package:star_drive/features/passenger/presentation/bloc/ride_request/ride_request_bloc.dart';
 import 'core/utils/logging.dart';
 import 'features/auth/presentation/screens/role_selection_screen.dart';
@@ -82,6 +84,8 @@ class StarDriveApp extends StatelessWidget {
         BlocProvider<RideRequestBloc>(create: (_) => sl<RideRequestBloc>()),
         BlocProvider<IncomingRideBloc>(create: (_) => sl<IncomingRideBloc>()),
         BlocProvider(create: (context) => sl<SendOfferBloc>()),
+        BlocProvider(create: (context)=>sl<PassengerRideBloc>()),
+        BlocProvider(create: (context)=>sl<DriverOfferResponseBloc>())
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {

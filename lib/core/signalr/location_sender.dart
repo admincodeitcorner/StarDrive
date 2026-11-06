@@ -11,30 +11,21 @@ class DriverLocationSender {
   final DioClient dioClient;
   final Logger logger = Logger('DriverLocationSender');
   Future<void> sendLocation({required double lat, required double lon}) async {
-    
-    //send location via SignalR if connected
-    if (signalRService.isConnected) {
-      try {
-        await _invokeLocation(lat, lon);
-
-        return;
-      } catch (error, stackTrace) {
-        logger.warning(
-          'SignalR location update failed. Using REST fallback.',
-          error,
-          stackTrace,
-        );
+    try {
+      if (!signalRService.isConnected) {
+        await signalRService.connect();
       }
-    } //Reconnected if SignalR is disconnected
-    else{
-      await signalRService.connect();
-
       if (signalRService.isConnected) {
         await _invokeLocation(lat, lon);
         return;
       }
+    } catch (error, stackTrace) {
+      logger.warning(
+        'SignalR location update failed. Using REST fallback.',
+        error,
+        stackTrace,
+      );
     }
-
     //REST fallback if SignalR fails.
     final result = await dioClient.postApiResponse(
       ApiEndpoints.driverLocationUpdate,

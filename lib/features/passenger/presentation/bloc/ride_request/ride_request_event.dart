@@ -18,6 +18,16 @@ final int offerFare;
   List<Object> get props => [estimateId, offerFare];
 }
 
-class RideRequestReset extends RideRequestEvent {
+final class RideRequestReset extends RideRequestEvent {
   const RideRequestReset();
+}
+final class RideRequestCancelled extends RideRequestEvent {
+  final String requestId;
+
+  const RideRequestCancelled({
+    required this.requestId,
+  });
+
+  @override
+  List<Object> get props => [requestId];
 }

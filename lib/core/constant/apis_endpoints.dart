@@ -9,12 +9,11 @@ class ApiEndpoints {
   static const verifyOtp = 'otp/verify';
   static const resetPassword = 'auth/reset-password';
   static const String logout = 'auth/logout';
-  //driver documentation 
+  //driver documentation
   static const driverDoc = 'driver/documents';
   static const String vechicleDetail = 'Vehicle/vehicle-details';
   static const String becomeDriver = 'driver/become-driver';
   static const String onboardStatus = 'driver/onboarding-status';
-  
 
   static const String rideHistory = 'ride/history';
 
@@ -24,6 +23,9 @@ class ApiEndpoints {
   // pessenger Ride Request
   static const String rideEstimate = 'ride/estimate';
   static const String passengerRideRequest = 'ride/request';
+  static const String passengerFindDriverCancel = 'ride/request/cancel';
+  static const String declineDriverOffer = 'ride/offer/decline';
+  static const String acceptDriverOffer = 'ride/accept';
 
   //user Profile
   static const String userProfile = 'user/profile';

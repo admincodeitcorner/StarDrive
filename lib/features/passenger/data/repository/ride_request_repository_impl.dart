@@ -33,5 +33,21 @@ class RideRequestRepositoryImpl implements RideRequestRepository {
     }
   }
 
-  
+  @override
+Future<Either<Failure, bool>> cancelRideRequest({
+  required String requestId,
+}) async {
+  try {
+    final result = await remoteDataSource.cancelRideRequest(
+      requestId,
+    );
+
+    return result.fold(
+      (exception) => Left(ErrorMapper.map(exception)),
+      (isCancelled) => Right(isCancelled),
+    );
+  } catch (error) {
+    return Left(ErrorMapper.map(error));
+  }
+}
 }
